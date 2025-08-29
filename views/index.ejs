@@ -81,7 +81,7 @@
     </nav>
     <div class="menu-overlay"></div>
 
-     <!-- Desktop Navbar -->
+    <!-- Desktop Navbar -->
     <nav class="desktop-navbar">
         <div class="logo">
             <img src="/uploads/logo.png" alt="Logo" width="180px" height="80px">
@@ -97,8 +97,6 @@
 
     <!-- banner carousel slider -->
     <div class="hero-slider" role="region" aria-label="Hero slider">
-        <div class="progress-bar"></div>
-        <div class="slide-counter">01 / 04</div>
 
         <div class="slides-container">
             <!-- Slide 1 -->
@@ -139,6 +137,11 @@
 
     <!-- Products cards -->
     <div class="container-fluid mt-5 p-5">
+        <div class="row">
+            <div class="container-fluid mt-3 p-3">
+                <h3 class="products-heading-cntr">Our Best Selling Products</h3>
+            </div>
+        </div>
         <div class="row g-1">
             <% products.forEach(product=> { %>
                 <div class="col-sm-12 col-md-3 col-lg-3">
@@ -181,17 +184,18 @@
                         </div>
                     </article>
                 </div>
-            <% }); %>
+                <% }); %>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-5 text-white">
-        <div class="container py-5">
+    <footer class="footer text-white">
+        <div class="container">
             <div class="row">
                 <!-- About Section -->
                 <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 mb-4 footer-inner-box">
-                    <h5 class="fw-bold">My Ecommerce</h5>
+                    <div class="logo" data-text="YourBrand"><img src="/uploads/logo.png" alt="" srcset="" width="300px"
+                            height="150px"></div>
                     <p>Your one-stop shop for all your needs. We provide the best quality products at affordable prices.
                     </p>
                 </div>
