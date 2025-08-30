@@ -320,9 +320,93 @@ app.get('/product/:id', verifyToken, (req, res) => {
     });
 });
 
-app.get('/add-to-cart/:id', verifyToken, (req, res) => {
-    console.log("product has been added in the cart");
+// user cart route
+app.get('/cart', verifyToken, (req, res) => {
+    // fetching the user id from the token
+    const userId = req.user.id;
+
+    // db query for fetching the user
+    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
+    db.query(SelectQuery, [userId], (err, users) => {
+        if (err) {
+            return res.send("Database Error");
+        } if (users.length === 0) {
+            return res.send("No such user in the database");
+        }
+        const user = users[0];
+
+        // Fetching the products in the cart of the respective user
+        const SelectCartQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
+        db.query(SelectCartQuery, [userId], (err, result) => {
+            if (err) {
+                return res.send("Error while fetching the cart items");
+            }
+            if (result.length === 0) {
+                return res.send('No items in your cart');
+            }
+            res.render('cart.ejs', { user, cartItems: result });
+        })
+    })
 });
+
+// add-to-cart route
+app.post('/add-to-cart/:id', verifyToken, (req, res) => {
+    const userId = req.user.id;
+    const productId = req.params.id;
+    const productQuantity = req.body.quantity || 1;
+
+    // checking whether this product is in the cart or not
+    const SelectQuery = 'SELECT * FROM cart WHERE user_id = ? and product_id = ?';
+    db.query(SelectQuery, [userId, productId], (err, result) => {
+        // if there is an error while running the query it will return an error
+        if (err) {
+            return res.send("Database Error");
+        }
+
+        // if there is an already an same item in the cart it will update and add the quantity
+        if (result.length > 0) {
+            const updateQuery = 'UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?';
+            db.query(updateQuery, [productQuantity, userId, productId], (err) => {
+                if (err) {
+                    return res.send("Error while updating the product");
+                }
+                res.redirect('/cart');
+            });
+        }
+
+        // and if there is no item in the cart, so then it will add your item in the cart
+        else {
+            const insertQuery = 'INSERT INTO cart(user_id, product_id, quantity) VALUES (?,?,?)';
+            db.query(insertQuery, [userId, productId, productQuantity], (err) => {
+                if (err) {
+                    return res.send("Error while inserting the item in your cart");
+                }
+                res.redirect('/cart');
+            });
+        }
+    })
+});
+
+// remove product route
+app.get('/removeItem/:id', verifyToken, (req, res) => {
+    const userID = req.user.id;
+    const cartID = req.params.id;
+
+    // sql query to remove item in the cart
+    const DeleteQuery = 'DELETE FROM cart WHERE user_id = ? AND cart_id = ?';
+    db.query(DeleteQuery, [userID, cartID], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error while deleting the product.");
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send("No such item found in your cart.");
+        }
+
+        res.redirect("/cart");
+    });
+})
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

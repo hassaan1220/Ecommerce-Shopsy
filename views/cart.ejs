@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <!-- custom css file link -->
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/cart.css">
 </head>
 
 <body>
@@ -136,96 +136,59 @@
         </ul>
     </nav>
 
-    <!-- banner carousel slider -->
-    <div class="hero-slider" role="region" aria-label="Hero slider">
-        <div class="progress-bar"></div>
-
-        <div class="slides-container">
-            <div class="slide active">
-                <img src="/uploads/1.png" alt="Banner 1" class="slide-img img-fluid">
-            </div>
-
-            <div class="slide">
-                <img src="/uploads/2.png" alt="Banner 2" class="slide-img img-fluid">
-            </div>
-
-            <div class="slide">
-                <img src="/uploads/3.png" alt="Banner 3" class="slide-img img-fluid">
+    <div class="container p-3">
+        <h3>Your Cart</h3>
+        <!-- Cart Table -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th style="text-align: center;">Remove Product</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let grandTotal=0; %>
+                            <% cartItems.forEach((item, index)=> { %>
+                                <% grandTotal +=item.total; %>
+                                    <tr>
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <%= item.name %>
+                                        </td>
+                                        <td>$<%= item.price %>
+                                        </td>
+                                        <td>
+                                            <%= item.quantity %>
+                                        </td>
+                                        <td>$<%= item.total %>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <a class="btn btn-sm" type="button" href="/removeItem/<%= item.cart_id %>"><i class="ti ti-x" style="font-size: 25px;"></i></a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                    </tbody>
+                    <tfoot>
+                        <tr class="fw-bold">
+                            <td colspan="4" class="text-end">Grand Total:</td>
+                            <td>$<%= grandTotal %>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
 
-        <div class="slider-nav">
-            <button class="slider-nav-btn prev" type="button" aria-label="Previous slide">
-                <i class="fas fa-chevron-left" aria-hidden="true"></i>
-            </button>
-            <button class="slider-nav-btn next" type="button" aria-label="Next slide">
-                <i class="fas fa-chevron-right" aria-hidden="true"></i>
-            </button>
-        </div>
-
-        <div class="slider-controls">
-            <div class="slider-dots">
-                <button class="slider-dot active" type="button" aria-pressed="true" aria-label="Go to slide 1"></button>
-                <button class="slider-dot" type="button" aria-pressed="false" aria-label="Go to slide 2"></button>
-                <button class="slider-dot" type="button" aria-pressed="false" aria-label="Go to slide 3"></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Products cards -->
-    <div class="container-fluid mt-5 p-5">
-        <div class="row">
-            <div class="container-fluid mt-3 p-3">
-                <h3 class="products-heading-cntr">Our Best Selling Products</h3>
-            </div>
-        </div>
-        <div class="row g-1">
-            <% products.forEach(product=> { %>
-                <div class="col-sm-12 col-md-3 col-lg-3">
-                    <article class="product-card" role="group" aria-label="Product: Noise-Cancelling Headphones">
-                        <div class="product-media">
-                            <img src="<%= product.image_url %>" alt="Matte black wireless headphones on a table" />
-                            <span class="badge-custom">-20%</span>
-
-                            <div class="actions" aria-label="Quick actions">
-                                <button class="icon-btn" title="Add to wishlist" aria-label="Add to wishlist">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path
-                                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"
-                                            stroke-width="2" />
-                                    </svg>
-                                </button>
-                                <button class="icon-btn" title="Quick view" aria-label="Quick view">
-                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" stroke-width="2" />
-                                        <circle cx="12" cy="12" r="3" stroke-width="2" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="product-body">
-                            <h3 class="title">
-                                <%= product.name %>
-                            </h3>
-
-                            <div class="price-row">
-                                <div class="price">$<%= product.price %>
-                                </div>
-                            </div>
-
-                            <div class="add-row">
-                                <form action="/add-to-cart/<%= product.product_id %>" method="POST" class="d-flex">
-                                    <input type="number" name="quantity" value="1" min="1" class="form-control me-2"
-                                        style="width:80px;" />
-                                    <button type="submit" class="btn-custom">Add to Cart</button>
-                                </form>
-                                <a class="btn-custom-view" href="/product/<%= product.product_id %>">View</a>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <% }); %>
+        <div class="mt-4 text-end">
+            <a href="/checkout" class="btn btn-checkout">Proceed to Checkout</a>
         </div>
     </div>
 
