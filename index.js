@@ -341,9 +341,6 @@ app.get('/cart', verifyToken, (req, res) => {
             if (err) {
                 return res.send("Error while fetching the cart items");
             }
-            if (result.length === 0) {
-                return res.send('No items in your cart');
-            }
             res.render('cart.ejs', { user, cartItems: result });
         })
     })
@@ -394,16 +391,11 @@ app.get('/removeItem/:id', verifyToken, (req, res) => {
 
     // sql query to remove item in the cart
     const DeleteQuery = 'DELETE FROM cart WHERE user_id = ? AND cart_id = ?';
-    db.query(DeleteQuery, [userID, cartID], (err, result) => {
+    db.query(DeleteQuery, [userID, cartID], (err) => {
         if (err) {
             console.error(err);
             return res.status(500).send("Error while deleting the product.");
         }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).send("No such item found in your cart.");
-        }
-
         res.redirect("/cart");
     });
 })

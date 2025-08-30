@@ -184,3 +184,19 @@ document.addEventListener('DOMContentLoaded', function () {
     wireEvents();
     goTo(0);
 });
+
+
+// images tab view (view-products.ejs page)
+const thumbs = document.querySelectorAll('.tab-buttons img');
+const preview = document.getElementById('preview');
+
+thumbs.forEach(img => {
+    img.addEventListener('click', () => {
+        // Change preview image
+        preview.src = img.getAttribute('data-full');
+
+        // Remove active from all and add to clicked
+        thumbs.forEach(i => i.classList.remove('active'));
+        img.classList.add('active');
+    });
+});

@@ -15,7 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <!-- custom css file link -->
-  <link rel="stylesheet" href="/css/view-product.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
@@ -181,16 +181,11 @@
             <!-- Availability -->
             <p class="stock">✔ In Stock</p>
 
-            <!-- Quantity Selector -->
-            <div class="quantity-control mb-3">
-              <label for="quantity" class="form-label">Quantity:</label>
-              <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control">
-            </div>
-
-            <!-- Buttons -->
-            <div class="btn-group">
-              <button class="btn btn-primary">Add to Cart</button>
-              <button class="btn btn-success">Buy Now</button>
+            <div class="add-row">
+              <form action="/add-to-cart/<%= product.product_id %>" method="POST" class="d-flex">
+                <input type="number" name="quantity" value="1" min="1" class="form-control me-2" style="width:80px;" />
+                <button type="submit" class="btn-custom">Add to Cart</button>
+              </form>
             </div>
             <% } %>
         </div>
@@ -198,65 +193,47 @@
     </div>
   </div>
 
-      <!-- Footer -->
-    <footer class="footer mt-4 text-white">
-        <div class="container">
-            <div class="row">
-                <!-- About Section -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <div class="logo" data-text="YourBrand"><img src="/uploads/logo.png" alt="" srcset="" width="300px"
-                            height="150px"></div>
-                    <p>Your one-stop shop for all your needs. We provide the best quality products at affordable prices.
-                    </p>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <h5 class="fw-bold">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">About</a></li>
-                        <li><a href="#" class="footer-link">Services</a></li>
-                        <li><a href="/login" class="footer-link">Login / Signup</a></li>
-                    </ul>
-                </div>
-
-                <!-- Social Media -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <h5 class="fw-bold">Follow Us</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-github"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="text-white">
-            <p class="text-center m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+  <!-- Footer -->
+  <footer class="footer mt-1">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- About Section -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <div class="logo"><img src="/uploads/logo.png" alt="" srcset="" width="250px" height="150px"></div>
+          <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at
+            affordable prices.</p>
         </div>
-    </footer>
+
+        <!-- Quick Links -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <h5 class="fw-bold">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="footer-link text-muted">Home</a></li>
+            <li><a href="#" class="footer-link text-muted">About</a></li>
+            <li><a href="#" class="footer-link text-muted">Services</a></li>
+            <li><a href="/login" class="footer-link text-muted">Login / Signup</a></li>
+          </ul>
+        </div>
+
+        <!-- Social Media -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <h5 class="fw-bold">Follow Us</h5>
+          <div class="d-flex gap-3">
+            <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-github"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="text-white">
+      <p class="text-center text-muted m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+    </div>
+  </footer>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/dashboard.js"></script>
-
-  <!-- images tab view js -->
-  <script>
-    const thumbs = document.querySelectorAll('.tab-buttons img');
-    const preview = document.getElementById('preview');
-
-    thumbs.forEach(img => {
-      img.addEventListener('click', () => {
-        // Change preview image
-        preview.src = img.getAttribute('data-full');
-
-        // Remove active from all and add to clicked
-        thumbs.forEach(i => i.classList.remove('active'));
-        img.classList.add('active');
-      });
-    });
-  </script>
+  <script src="/js/style.js"></script>
 
 </body>
 

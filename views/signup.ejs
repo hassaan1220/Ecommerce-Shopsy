@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- custom css file link -->
-  <link rel="stylesheet" href="/css/signup.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
@@ -125,48 +125,47 @@
     </div>
   </div>
 
-    <!-- Footer -->
-    <footer class="footer mt-4 text-white">
-        <div class="container">
-            <div class="row">
-                <!-- About Section -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <div class="logo" data-text="YourBrand"><img src="/uploads/logo.png" alt="" srcset="" width="300px"
-                            height="150px"></div>
-                    <p>Your one-stop shop for all your needs. We provide the best quality products at affordable prices.
-                    </p>
-                </div>
-
-                <!-- Quick Links -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <h5 class="fw-bold">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">About</a></li>
-                        <li><a href="#" class="footer-link">Services</a></li>
-                        <li><a href="/login" class="footer-link">Login / Signup</a></li>
-                    </ul>
-                </div>
-
-                <!-- Social Media -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
-                    <h5 class="fw-bold">Follow Us</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="footer-icon"><i class="bi bi-github"></i></a>
-                    </div>
-                </div>
-            </div>
-            <hr class="text-white">
-            <p class="text-center m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+  <!-- Footer -->
+  <footer class="footer mt-1">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- About Section -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <div class="logo"><img src="/uploads/logo.png" alt="" srcset="" width="250px" height="150px"></div>
+          <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at
+            affordable prices.</p>
         </div>
-    </footer>
+
+        <!-- Quick Links -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <h5 class="fw-bold">Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="footer-link text-muted">Home</a></li>
+            <li><a href="#" class="footer-link text-muted">About</a></li>
+            <li><a href="#" class="footer-link text-muted">Services</a></li>
+            <li><a href="/login" class="footer-link text-muted">Login / Signup</a></li>
+          </ul>
+        </div>
+
+        <!-- Social Media -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
+          <h5 class="fw-bold">Follow Us</h5>
+          <div class="d-flex gap-3">
+            <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="footer-icon"><i class="bi bi-github"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="text-white">
+      <p class="text-center text-muted m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+    </div>
+  </footer>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/dashboard.js"></script>
+  <script src="/js/style.js"></script>
 
 </body>
 
