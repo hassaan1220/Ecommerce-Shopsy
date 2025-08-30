@@ -178,7 +178,11 @@
                             </div>
 
                             <div class="add-row">
-                                <a class="btn-custom" href="/add-to-cart/<%= product.product_id %>">Add to Cart</a>
+                                <form action="/add-to-cart/<%= product.product_id %>" method="POST" class="d-flex">
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control me-2"
+                                        style="width:80px;" />
+                                    <button type="submit" class="btn-custom">Add to Cart</button>
+                                </form>
                                 <a class="btn-custom-view" href="/product/<%= product.product_id %>">View</a>
                             </div>
                         </div>
