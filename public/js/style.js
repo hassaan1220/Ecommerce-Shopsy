@@ -85,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', animateOnScroll);
 });
 
-
 // slider js
 document.addEventListener('DOMContentLoaded', function () {
     // Elements
@@ -129,18 +128,22 @@ document.addEventListener('DOMContentLoaded', function () {
     function prev() { goTo(currentIndex - 1); }
 
     function updateCounter() {
-        counterEl.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(slideEls.length).padStart(2, '0')}`;
+        if (counterEl) {
+            counterEl.textContent = `${String(currentIndex + 1).padStart(2, '0')} / ${String(slideEls.length).padStart(2, '0')}`;
+        }
     }
 
     function restartProgress() {
         clearInterval(timerId);
-        progressEl.style.transition = 'none';
-        progressEl.style.width = '0%';
-        // Allow the DOM to settle then animate the progress bar
-        setTimeout(() => {
-            progressEl.style.transition = `width ${AUTO_ADVANCE_MS}ms linear`;
-            progressEl.style.width = '100%';
-        }, 20);
+        if (progressEl) {
+            progressEl.style.transition = 'none';
+            progressEl.style.width = '0%';
+            // Allow the DOM to settle then animate the progress bar
+            setTimeout(() => {
+                progressEl.style.transition = `width ${AUTO_ADVANCE_MS}ms linear`;
+                progressEl.style.width = '100%';
+            }, 10);
+        }
         timerId = setInterval(next, AUTO_ADVANCE_MS);
     }
 
@@ -148,8 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event wiring
     function wireEvents() {
-        prevButton.addEventListener('click', prev);
-        nextButton.addEventListener('click', next);
+        prevButton?.addEventListener('click', prev);
+        nextButton?.addEventListener('click', next);
 
         dotButtons.forEach((btn, i) => {
             btn.addEventListener('click', () => goTo(i));
@@ -159,32 +162,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         const sliderRoot = document.querySelector('.hero-slider');
-        sliderRoot.addEventListener('mouseenter', pause);
-        sliderRoot.addEventListener('mouseleave', restartProgress);
-        sliderRoot.addEventListener('focusin', pause);
-        sliderRoot.addEventListener('focusout', restartProgress);
+        if (sliderRoot) {
+            sliderRoot.addEventListener('mouseenter', pause);
+            sliderRoot.addEventListener('mouseleave', restartProgress);
+            sliderRoot.addEventListener('focusin', pause);
+            sliderRoot.addEventListener('focusout', restartProgress);
+
+            // Touch swipe
+            let touchStartX = 0;
+            sliderRoot.addEventListener('touchstart', (ev) => { touchStartX = ev.changedTouches[0].screenX; }, false);
+            sliderRoot.addEventListener('touchend', (ev) => {
+                const touchEndX = ev.changedTouches[0].screenX;
+                if (touchEndX < touchStartX - 50) next();
+                else if (touchEndX > touchStartX + 50) prev();
+            }, false);
+        }
 
         document.addEventListener('keydown', (ev) => {
             if (ev.key === 'ArrowLeft') prev();
             if (ev.key === 'ArrowRight') next();
         });
-
-        // Touch swipe
-        let touchStartX = 0;
-        sliderRoot.addEventListener('touchstart', (ev) => { touchStartX = ev.changedTouches[0].screenX; }, false);
-        sliderRoot.addEventListener('touchend', (ev) => {
-            const touchEndX = ev.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) next();
-            else if (touchEndX > touchStartX + 50) prev();
-        }, false);
     }
 
     // Bootstrap
     setInitialStates();
     wireEvents();
     goTo(0);
+    restartProgress(); // start auto-sliding on page load
 });
-
 
 // images tab view (view-products.ejs page)
 const thumbs = document.querySelectorAll('.tab-buttons img');
