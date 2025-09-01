@@ -84,17 +84,25 @@
     <div class="menu-overlay"></div>
 
     <!-- Desktop Navbar -->
-    <nav class="desktop-navbar bg-body-tertiary">
-        <div class="logo">
-            <a href="/"><img src="/uploads/logo.png"></a>
+    <nav class="desktop-navbar bg-body-tertiary d-flex align-items-center">
+        <!-- Left: Logo -->
+        <div class="navbar-left">
+            <a href="/"><img src="/uploads/logo.png" alt="Logo" class="navbar-logo"></a>
         </div>
-        <ul class="desktop-nav-list">
-            <li class="m-1"><a href="/">Home</a></li>
-            <li class="m-1"><a href="/about">About</a></li>
-            <li class="m-1"><a href="/services">Services</a></li>
-            <li class="m-1"><a href="/contact">Contact</a></li>
-            <li class="m-1"><a href="/login"></i>Login</a></li>
+
+        <!-- Center: Nav Links -->
+        <ul class="desktop-nav-list d-flex justify-content-center m-0">
+            <li class="m-2"><a href="/">Home</a></li>
+            <li class="m-2"><a href="/about">About</a></li>
+            <li class="m-2"><a href="/services">Services</a></li>
+            <li class="m-2"><a href="/contact">Contact</a></li>
         </ul>
+
+        <!-- Right: Cart + Login -->
+        <div class="navbar-right d-flex align-items-center gap-3">
+            <a href="/cart" class="btn btn-sm cart-link"><i class="ti ti-shopping-bag"></i></a>
+            <a href="/login" class="btn btn-sm login-link"><i class="ti ti-login"></i></a>
+        </div>
     </nav>
 
     <!-- banner carousel slider -->
@@ -196,12 +204,12 @@
     </div>
 
     <!-- Clothes Categories Section -->
-    <div class="container-fluid mt-4 p-5 clothes-categories">
-        <div class="text-center mb-5">
+    <div class="container-fluid mt-1 p-5 clothes-categories">
+        <div class="text-center mb-3">
             <h2 class="fw-bold">Shop by Category</h2>
             <p class="text-muted">Explore the latest trends in women’s fashion</p>
         </div>
-        <div class="row g-3">
+        <div class="row g-1">
 
             <!-- Category 1 -->
             <div class="col-md-4">
@@ -239,6 +247,109 @@
         </div>
     </div>
 
+    <!-- Showcase tab view Section -->
+    <div class="container-fluid showcase mt-1 p-5">
+        <!-- Tabs -->
+        <div class="showcase-tabs d-flex justify-content-center gap-2">
+            <div class="showcase-tab active" data-tab="all">All</div>
+            <div class="showcase-tab" data-tab="sale">Sale</div>
+            <div class="showcase-tab" data-tab="bestseller">Bestseller</div>
+            <div class="showcase-tab" data-tab="featured">Featured</div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-4 mb-5">
+            <!-- All -->
+            <div class="tab-pane fade show active" id="all">
+                <div class="row g-1">
+                    <% products.forEach(product=> { %>
+                        <div class="col-sm-12 col-md-3 col-lg-3">
+                            <article class="product-card" role="group"
+                                aria-label="Product: Noise-Cancelling Headphones">
+                                <div class="product-media">
+                                    <img src="<%= product.image_url %>"
+                                        alt="Matte black wireless headphones on a table" />
+                                    <span class="badge-custom">-20%</span>
+
+                                    <div class="actions" aria-label="Quick actions">
+                                        <button class="icon-btn" title="Add to wishlist" aria-label="Add to wishlist">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path
+                                                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"
+                                                    stroke-width="2" />
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" title="Quick view" aria-label="Quick view">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"
+                                                    stroke-width="2" />
+                                                <circle cx="12" cy="12" r="3" stroke-width="2" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="product-body">
+                                    <h3 class="title">
+                                        <%= product.name %>
+                                    </h3>
+
+                                    <div class="price-row">
+                                        <div class="price">$<%= product.price %>
+                                        </div>
+                                    </div>
+
+                                    <div class="add-row">
+                                        <form action="/add-to-cart/<%= product.product_id %>" method="POST"
+                                            class="d-flex">
+                                            <input type="number" name="quantity" value="1" min="1"
+                                                class="form-control me-2" style="width:80px;" />
+                                            <button type="submit" class="btn-custom">Add to Cart</button>
+                                        </form>
+                                        <a class="btn-custom-view" href="/product/<%= product.product_id %>">View</a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+
+            <!-- Sale -->
+            <div class="tab-pane fade" id="sale">
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card p-3">Sale Item 1</div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card p-3">Sale Item 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bestseller -->
+            <div class="tab-pane fade" id="bestseller">
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card p-3">Bestseller 1</div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="card p-3">Bestseller 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured -->
+            <div class="tab-pane fade" id="featured">
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="card p-3">Featured 1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer mt-1 bg-body-tertiary">
         <div class="container-fluid">
@@ -246,7 +357,8 @@
                 <!-- About Section -->
                 <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
                     <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-                    <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at affordable prices.</p>
+                    <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at
+                        affordable prices.</p>
                 </div>
 
                 <!-- Quick Links -->
@@ -272,7 +384,8 @@
                 </div>
             </div>
             <hr class="text-white">
-            <p class="text-center text-muted m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+            <p class="text-center text-muted m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.
+            </p>
         </div>
     </footer>
 

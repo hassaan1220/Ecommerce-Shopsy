@@ -205,3 +205,21 @@ thumbs.forEach(img => {
         img.classList.add('active');
     });
 });
+
+// show case tab view js
+document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".showcase-tab");
+    const panes = document.querySelectorAll(".tab-pane");
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+            // remove active
+            tabs.forEach(t => t.classList.remove("active"));
+            panes.forEach(p => p.classList.remove("show", "active"));
+
+            // activate clicked
+            tab.classList.add("active");
+            document.getElementById(tab.dataset.tab).classList.add("show", "active");
+        });
+    });
+});
