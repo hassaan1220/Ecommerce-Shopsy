@@ -12,6 +12,12 @@
   <!-- font family -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- tabler icon -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <!-- owl carousel link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <!-- custom css file link -->
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -82,15 +88,25 @@
   <div class="menu-overlay"></div>
 
   <!-- Desktop Navbar -->
-  <nav class="desktop-navbar">
-    <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-    <ul class="desktop-nav-list">
-      <li class="m-1"><a href="/">Home</a></li>
-      <li class="m-1"><a href="/about">About</a></li>
-      <li class="m-1"><a href="/services">Services</a></li>
-      <li class="m-1"><a href="/contact">Contact</a></li>
-      <li class="m-1"><a href="/login">Login</a></li>
+  <nav class="desktop-navbar bg-body-tertiary d-flex align-items-center">
+    <!-- Left: Logo -->
+    <div class="navbar-left">
+      <a href="/"><img src="/uploads/logo.png" alt="Logo" class="navbar-logo"></a>
+    </div>
+
+    <!-- Center: Nav Links -->
+    <ul class="desktop-nav-list d-flex justify-content-center m-0">
+      <li class="m-2"><a href="/">Home</a></li>
+      <li class="m-2"><a href="/about">About</a></li>
+      <li class="m-2"><a href="/services">Services</a></li>
+      <li class="m-2"><a href="/contact">Contact</a></li>
     </ul>
+
+    <!-- Right: Cart + Login -->
+    <div class="navbar-right d-flex align-items-center gap-3">
+      <a href="/cart" class="btn btn-sm cart-link"><i class="ti ti-shopping-bag"></i></a>
+      <a href="/login" class="btn btn-sm login-link"><i class="ti ti-login"></i></a>
+    </div>
   </nav>
 
   <!-- Signup container -->

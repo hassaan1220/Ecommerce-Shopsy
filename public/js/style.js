@@ -223,3 +223,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// owl carousel
+$(document).ready(function(){
+  $(".owl-carousel").owlCarousel({
+    loop: true,              // Infinite loop
+    margin: 10,              // Gap between items
+    nav: true,               // Show next/prev arrows
+    dots: true,              // Show dots
+    autoplay: true,          // Auto slide
+    autoplayTimeout: 3000,   // 3 sec delay
+    autoplayHoverPause: true,
+    responsive:{
+        0:{ items:1 },       // Mobile
+        600:{ items:2 },     // Tablet
+        1000:{ items:4 }     // Desktop
+    }
+  });
+});

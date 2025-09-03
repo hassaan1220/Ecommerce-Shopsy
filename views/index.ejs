@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- tabler icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <!-- owl carousel link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <!-- custom css file link -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -203,50 +207,6 @@
         </div>
     </div>
 
-    <!-- Clothes Categories Section -->
-    <div class="container-fluid mt-1 p-5 clothes-categories">
-        <div class="text-center mb-3">
-            <h2 class="fw-bold">Shop by Category</h2>
-            <p class="text-muted">Explore the latest trends in women’s fashion</p>
-        </div>
-        <div class="row g-1">
-
-            <!-- Category 1 -->
-            <div class="col-md-4">
-                <div class="category-card">
-                    <img src="/uploads/dresses.webp" alt="Dresses" class="category-img">
-                    <div class="overlay">
-                        <h4 class="category-title">Dresses</h4>
-                        <a href="/products/dresses" class="btn btn-light view-btn">View Products</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Category 2 -->
-            <div class="col-md-4">
-                <div class="category-card">
-                    <img src="/uploads/tops.webp" alt="Tops" class="category-img">
-                    <div class="overlay">
-                        <h4 class="category-title">Tops</h4>
-                        <a href="/products/tops" class="btn btn-light view-btn">View Products</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Category 3 -->
-            <div class="col-md-4">
-                <div class="category-card">
-                    <img src="/uploads/outwears.webp" alt="Outerwear" class="category-img">
-                    <div class="overlay">
-                        <h4 class="category-title">Outerwear</h4>
-                        <a href="/products/outerwear" class="btn btn-light view-btn">View Products</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
     <!-- Showcase tab view Section -->
     <div class="container-fluid showcase mt-1 p-5">
         <!-- Tabs -->
@@ -350,6 +310,23 @@
         </div>
     </div>
 
+    <!-- Owl Carousel Section -->
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Our Featured Products</h2>
+            </div>
+        </div>
+        <div class="owl-carousel owl-theme">
+            <div class="item"><img src="/uploads/dresses.webp" alt="Dresses"></div>
+            <div class="item"><img src="/uploads/tops.webp" alt="Tops"></div>
+            <div class="item"><img src="/uploads/outwears.webp" alt="Outerwear"></div>
+            <div class="item"><img src="/uploads/jeans.webp" alt="Jeans"></div>
+            <div class="item"><img src="/uploads/tshirt.webp" alt="T-Shirt"></div>
+        </div>
+    </div>
+
+
     <!-- Footer -->
     <footer class="footer mt-1 bg-body-tertiary">
         <div class="container-fluid">
@@ -391,6 +368,13 @@
 
     <!-- Javascript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- jQuery (required by Owl Carousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
     <script src="/js/style.js"></script>
 </body>
 
