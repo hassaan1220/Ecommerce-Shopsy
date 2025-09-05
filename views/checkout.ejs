@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container p-4">
+        <h2>Checkout</h2>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% cartItems.forEach(item=> { %>
+                    <tr>
+                        <td>
+                            <%= item.name %>
+                        </td>
+                        <td>$<%= item.price %>
+                        </td>
+                        <td>
+                            <%= item.quantity %>
+                        </td>
+                        <td>$<%= item.total %>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+
+        <h4>Total: $<%= total %>
+        </h4>
+
+        <br>
+
+        <div class="container">
+            <form action="/place-order" method="POST" class="card p-4 shadow-sm">
+
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" required>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="tel" id="phone_number" name="phone_number" class="form-control" required>
+                </div>
+
+                <!-- Address -->
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea id="address" name="address" class="form-control" rows="2" required></textarea>
+                </div>
+
+                <!-- City -->
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" id="city" name="city" class="form-control" required>
+                </div>
+
+                <!-- Province -->
+                <div class="mb-3">
+                    <label for="province" class="form-label">Province</label>
+                    <input type="text" id="province" name="province" class="form-control" required>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="mb-3">
+                    <label for="payment_method" class="form-label">Payment Method</label>
+                    <select id="payment_method" name="payment_method" class="form-select" required>
+                        <option value="">-- Select Payment Method --</option>
+                        <option value="cash_on_delivery">Cash on Delivery</option>
+                        <option value="credit_card">Credit Card</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+                </div>
+
+                <!-- Place Order Button -->
+                <button type="submit" class="btn btn-success w-100">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

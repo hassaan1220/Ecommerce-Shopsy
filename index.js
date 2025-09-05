@@ -400,6 +400,58 @@ app.get('/removeItem/:id', verifyToken, (req, res) => {
     });
 })
 
+// check out page route
+app.get('/checkout', verifyToken, (req, res) => {
+    // fetching the user_id from the token
+    const userID = req.user.id;
+
+    // sql query to fetch the item from the cart according to the user id
+    const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
+    db.query(SelectQuery, [userID], (err, results) => {
+        if (err) {
+            return res.send("Error while fetching the cart items");
+        }
+
+        // calculating the total
+        let total = 0;
+        results.forEach(item => {
+            total += item.total;
+        });
+
+        res.render('checkout.ejs', { cartItems: results, total });
+    })
+});
+
+// place order route
+app.post('/place-order', verifyToken, (req, res) => {
+    // fetching the user id from the token
+    const userID = req.user.id;
+    // fetching the form data from the ejs file through body parser
+    const { full_name, phone_number, address, city, province, payment_method } = req.body;
+
+    // select query for calculating the total of the cart
+    const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
+    db.query(SelectQuery, [userID], (err, results) => {
+        if (err) {
+            return res.send("Error while fetching the cart items");
+        }
+
+        // calculating the total
+        let total = 0;
+        results.forEach(item => {
+            total += item.total;
+        });
+
+        const InsertQuery = 'INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        db.query(InsertQuery, [userID, full_name, phone_number, address, city, province, total, payment_method], (err) => {
+            if (err) {
+                return res.send("error while placing the order");
+            }
+            console.log("Your order has been placed successfully");
+        });
+    })
+});
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
