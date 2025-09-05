@@ -405,20 +405,31 @@ app.get('/checkout', verifyToken, (req, res) => {
     // fetching the user_id from the token
     const userID = req.user.id;
 
-    // sql query to fetch the item from the cart according to the user id
-    const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
-    db.query(SelectQuery, [userID], (err, results) => {
+    // db query for fetching the user
+    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
+    db.query(SelectQuery, [userID], (err, users) => {
         if (err) {
-            return res.send("Error while fetching the cart items");
+            return res.send("Database Error");
+        } if (users.length === 0) {
+            return res.send("No such user in the database");
         }
+        const user = users[0];
 
-        // calculating the total
-        let total = 0;
-        results.forEach(item => {
-            total += item.total;
-        });
+        // sql query to fetch the item from the cart according to the user id
+        const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
+        db.query(SelectQuery, [userID], (err, results) => {
+            if (err) {
+                return res.send("Error while fetching the cart items");
+            }
 
-        res.render('checkout.ejs', { cartItems: results, total });
+            // calculating the total
+            let total = 0;
+            results.forEach(item => {
+                total += item.total;
+            });
+
+            res.render('checkout.ejs', { user, cartItems: results, total });
+        })
     })
 });
 
@@ -447,7 +458,7 @@ app.post('/place-order', verifyToken, (req, res) => {
             if (err) {
                 return res.send("error while placing the order");
             }
-            console.log("Your order has been placed successfully");
+            res.send("your order has been placed successfully!");
         });
     })
 });

@@ -111,26 +111,36 @@
     <div class="menu-overlay"></div>
 
     <!-- Desktop Navbar -->
-    <nav class="desktop-navbar">
-        <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-        <ul class="desktop-nav-list">
-            <li class="m-1"><a href="/">Home</a></li>
-            <li class="m-1"><a href="/about">About</a></li>
-            <li class="m-1"><a href="/services">Services</a></li>
-            <li class="m-1"><a href="/contact">Contact</a></li>
+    <nav class="desktop-navbar bg-body-tertiary d-flex align-items-center">
+        <!-- Left: Logo -->
+        <div class="navbar-left">
+            <a href="/"><img src="/uploads/logo.png" alt="Logo" class="navbar-logo"></a>
+        </div>
 
-            <% if (user) { %>
-                <li>
-                    <a href="#">
-                        <i class="ti ti-user" style="font-size: 30px;"></i>
-                    </a>
-                </li>
-                <li><a href="/cart"><i class="ti ti-shopping-bag" style="font-size: 30px;"></i></a></li>
-                <li><a href="/logout"><i class="ti ti-logout-2" style="font-size: 30px;"></i></a></li>
-                <% } else { %>
-                    <li><a href="/login">Login/Signup</a></li>
-                    <% } %>
+        <!-- Center: Nav Links -->
+        <ul class="desktop-nav-list d-flex justify-content-center m-0">
+            <li class="m-2"><a href="/">Home</a></li>
+            <li class="m-2"><a href="/about">About</a></li>
+            <li class="m-2"><a href="/services">Services</a></li>
+            <li class="m-2"><a href="/contact">Contact</a></li>
         </ul>
+
+        <% if (user) { %>
+            <!-- Right: Cart + Login -->
+            <div class="navbar-right d-flex align-items-center gap-3">
+                <a href="/cart" class="btn btn-sm cart-link"><i class="ti ti-shopping-bag"></i></a>
+                <div class="dropdown">
+                    <button class="btn btn-sm dropdown-toggle login-link" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="ti ti-user"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="/profile" class="dropdown-item">Profile</a></li>
+                        <li><a href="/logout" class="dropdown-item">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <% } %>
     </nav>
 
     <div class="container p-3">
