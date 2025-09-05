@@ -1,9 +1,0 @@
-order database schema
-1. Orders Id for tracking order id
-2. Users Id for tracking the user id that which user has place this order
-3. Full name full name of the cutomer which is placing this order
-4. Phone number contact number of this customer which is placing this order
-5. Address address of this customer which is placing this order
-6. Province province of this customer which is placing this order
-7. City city of this customer which is placing this order
-8. totalamount total amount of the order which is placed by the user
