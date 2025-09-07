@@ -313,34 +313,33 @@ body {
 
 /*************** header css ended (MOBILE NAVBAR) *******************/
 
-/*************** Desktop Navbar (DESKTOP ONLY) css Start *******************/
-
 .desktop-navbar {
     display: flex;
-    justify-content: space-between;
-    /* logo left | links center | right items */
     align-items: center;
-    padding: 10px 40px;
-    position: relative;
+    padding: 0.5rem 0;
 }
 
 .navbar-left {
     flex: 1;
+    display: flex;
+    justify-content: flex-start;
 }
 
 .desktop-nav-list {
-    flex: 2;
-    list-style: none;
+    flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end; /* 🔑 sab items right align */
+    align-items: center;
     gap: 20px;
     padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 .desktop-nav-list li a {
     font-family: "Poppins", sans-serif;
     text-decoration: none;
-    font-weight: 400;
+    font-weight: 500;
     color: #333;
     transition: color 0.3s ease;
 }
@@ -349,48 +348,59 @@ body {
     color: #ff9800;
 }
 
-.navbar-right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
 .navbar-logo {
-    height: 90px;
+    height: 100px;
+    object-fit: contain;
 }
 
-.cart-link {
-    font-size: 30px;
-    text-decoration: none;
-    font-weight: 500;
-    color: #333;
-}
-
+.cart-link,
 .login-link {
-    font-size: 30px;
+    font-size: 26px;
     text-decoration: none;
     font-weight: 500;
     color: #333;
+    transition: color 0.3s ease;
 }
 
-/* Switch navbars based on screen size */
-@media screen and (min-width: 992px) {
-
-    .header,
-    .nav,
-    .menu-overlay {
-        display: none !important;
-        /* Hide mobile nav */
-    }
-
-    .desktop-navbar {
-        display: flex;
-        /* Show desktop nav */
-    }
+.icofont-user {
+  font-size: 26px;   /* make it bigger */
+  color: #333;       /* default color */
+  transition: color 0.3s ease;
 }
 
-/*************** Desktop Navbar (DESKTOP ONLY) css ended *******************/
+.icofont-user:hover {
+  color: #ff9800;    /* hover effect */
+}
+
+
+/* ✅ Toggle between Mobile & Desktop Navbar */
+
+/* By default dono hide */
+.desktop-navbar,
+.header {
+  display: none;
+}
+
+/* Desktop Navbar (visible ≥ 992px) */
+@media (min-width: 992px) {
+  .desktop-navbar {
+    display: flex;
+  }
+  .header {
+    display: none;
+  }
+}
+
+/* Mobile Navbar (visible ≤ 991px) */
+@media (max-width: 991px) {
+  .desktop-navbar {
+    display: none;
+  }
+  .header {
+    display: flex;
+  }
+}
+
 
 /*************** Slider CSS Start *******************/
 
