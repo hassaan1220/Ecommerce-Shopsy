@@ -543,7 +543,6 @@ body {
     position: relative;
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
     overflow: hidden;
     transition: all 0.2s ease-in;
 }
@@ -551,7 +550,6 @@ body {
 .product-card:hover {
     transform: translateY(-6px);
     box-shadow: var(--shadow);
-    border-color: #ff9800;
 }
 
 /* image */
@@ -673,51 +671,29 @@ body {
 }
 
 .add-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
+    gap: 5px;
+    margin-top: 10px;
 }
 
-/* btn-custom */
-.btn-custom {
-    text-align: center;
-    flex: 1;
-    border: none;
-    background: #ff9800;
-    color: var(--accent-contrast);
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in;
-    text-decoration: none;
+.quantity-input {
+  width: 60px;
+  height: 100%; /* button ke height ke barabar */
+  display: flex;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+  padding: 0.375rem 0.75rem; /* Bootstrap ke button ke equal */
 }
 
-.btn-custom:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-}
-
-/* btn-custom-view */
+.btn-custom, 
 .btn-custom-view {
-    text-align: center;
-    flex: 1;
-    border: none;
-    background: white;
-    border: 1px solid #ff9800;
-    color: #ff9800;
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in;
-    text-decoration: none;
+  height: 50px; /* input ke barabar height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 15px;
 }
 
-.btn-custom-view :hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-}
 
 /*************** products grid css ended  *******************/
 
