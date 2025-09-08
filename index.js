@@ -291,7 +291,7 @@ app.get('/logout', (req, res) => {
 });
 
 // view products route
-app.get('/product/:id', verifyToken, (req, res) => {
+app.get('/view-product/:id', verifyToken, (req, res) => {
     // fetching the product id through params
     const productID = req.params.id;
     const userId = req.user.id;
