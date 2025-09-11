@@ -150,32 +150,8 @@
         </div>
     </div>
 
-    <!-- Categories section -->
-    <div class="container catogeries-main-cntr">
-        <div class="row g-2">
-            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                <div class="category-card" id="catogery-card-1">
-                    <h5>Women Dresses</h5>
-                    <button type="button" class="btn btn-sm">view</button>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                <div class="category-card" id="catogery-card-2">
-                    <h5>Jeans & Cargo Pants</h5>
-                    <button type="button" class="btn btn-sm">view</button>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                <div class="category-card" id="catogery-card-3">
-                    <h5>Outwears</h5>
-                    <button type="button" class="btn btn-sm">view</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Products cards -->
-    <div class="container products-cards-main-cntr pt-5">
+    <div class="container products-cards-main-cntr">
         <div class="row">
             <div class="text-left">
                 <p>Best Seller This Week</p>
@@ -216,7 +192,44 @@
         </div>
     </div>
 
-    <!-- content box -->
+    <!-- Categories Section -->
+    <div class="container categories-main-cntr">
+        <div class="row g-3">
+
+            <!-- Left Big Box -->
+            <div class="col-md-6">
+                <div class="category-box big-box" style="background-image: url('../uploads/category-cntr-1.jpg');">
+                    <div class="content">
+                        <p class="sub-heading">UNIQUE COLLECTION</p>
+                        <h2>Women Dresses</h2>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Two Small Boxes -->
+            <div class="col-md-6 d-flex flex-column gap-3">
+                <div class="category-box small-box" style="background-image: url('../uploads/category-cntr-2.jpg');">
+                    <div class="content">
+                        <p class="sub-heading">BASIC COLLECTION</p>
+                        <h3>Denim Jeans & Pants</h3>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+
+                <div class="category-box small-box" style="background-image: url('../uploads/category-cntr-3.jpg');">
+                    <div class="content">
+                        <p class="sub-heading">BEST SELLING PRODUCT</p>
+                        <h3>Outwears</h3>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- limited collection container -->
     <div class="container-fluid limited-collection-main-cntr">
         <div class="container-fluid limited-collection-banner"></div>
     </div>
@@ -312,18 +325,62 @@
     </div>
 
     <!-- Owl Carousel Section -->
-    <div class="container mt-5">
+    <div class="container owl-carousel-main-cntr">
         <div class="row">
             <div class="text-center">
-                <p>Elegance in Every Thread</p>
-                <h3>Our Latest Styles</h3>
+                <p class="sub-heading">Elegance in Every Thread</p>
+                <h3 class="main-heading">Our Latest Styles</h3>
             </div>
         </div>
+
         <div class="owl-carousel owl-theme">
-            <div class="item"><img src="/uploads/owl-carousel-1.jpg" alt="Dresses"></div>
-            <div class="item"><img src="/uploads/owl-carousel-2.jpg" alt="Tops"></div>
-            <div class="item"><img src="/uploads/owl-carousel-3.jpg" alt="Outerwear"></div>
-            <div class="item"><img src="/uploads/owl-carousel-4.jpg" alt="Jeans"></div>
+            <!-- Item 1 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/owl-carousel-1.jpg" alt="Dresses">
+                    <div class="card-content">
+                        <h4>Dresses</h4>
+                        <p>Discover chic and elegant dresses for every occasion.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/owl-carousel-2.jpg" alt="Tops">
+                    <div class="card-content">
+                        <h4>Tops</h4>
+                        <p>Trendy tops that elevate your casual and formal looks.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/owl-carousel-3.jpg" alt="Outerwear">
+                    <div class="card-content">
+                        <h4>Outerwear</h4>
+                        <p>Stay warm & stylish with our jackets and coats.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/owl-carousel-4.jpg" alt="Jeans">
+                    <div class="card-content">
+                        <h4>Jeans</h4>
+                        <p>Perfect fit jeans that combine comfort with fashion.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

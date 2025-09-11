@@ -532,111 +532,11 @@ body {
 
 /*************** Slider CSS End *******************/
 
-.limited-collection-main-cntr {
-    padding-top: 100px;
-    padding-bottom: 100px;
-}
-
-.catogeries-main-cntr {
-    padding-top: 80px;
-    padding-bottom: 80px;
-}
-
-.category-card {
-    position: relative;
-    height: 300px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 20px;
-    border-radius: 5px;
-    overflow: hidden;
-    /* hides zoomed image overflow */
-    cursor: pointer;
-    color: #fff;
-}
-
-/* background image goes on a pseudo-element */
-.category-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transition: transform 0.5s ease;
-    /* smooth zoom */
-    z-index: 1;
-    border-radius: 5px;
-}
-
-#catogery-card-1::before {
-    background-image: url("../uploads/category-cntr-1.jpg");
-}
-
-#catogery-card-2::before {
-    background-image: url("../uploads/category-cntr-2.jpg");
-}
-
-#catogery-card-3::before {
-    background-image: url("../uploads/category-cntr-3.jpg");
-}
-
-/* gradient overlay */
-.category-card::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-    z-index: 2;
-    border-radius: 5px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* text & button */
-.category-card h5,
-.category-card .btn {
-    position: relative;
-    z-index: 3;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.4s ease;
-    margin: 5px 0;
-}
-
-.category-card .btn {
-    color: black;
-    background-color: white;
-    transition: all 0.4s ease;
-}
-
-/* hover effects */
-.category-card:hover::before {
-    transform: scale(1.2);
-    /* zoom image */
-}
-
-.category-card:hover::after {
-    opacity: 1;
-    /* dark overlay visible */
-}
-
-.category-card:hover h5,
-.category-card:hover .btn {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-
 /*************** products grid css start  *******************/
+
+.products-cards-main-cntr {
+    margin-top: 100px;
+}
 
 .products-heading-cntr {
     text-align: left;
@@ -713,7 +613,74 @@ body {
 
 /*************** products grid css ended  *******************/
 
-/* limited-collection-banner */
+/*************** categories container css started  *******************/
+
+.categories-main-cntr {
+    margin-top: 130px;
+}
+
+.category-box {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    color: #fff;
+    display: flex;
+    align-items: flex-end;
+    min-height: 300px;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.big-box {
+    min-height: 620px;
+}
+
+.category-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.category-box .content {
+    position: relative;
+    z-index: 2;
+}
+
+.category-box h2,
+.category-box h3 {
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+.category-box .sub-heading {
+    font-size: 14px;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.shop-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #fff;
+    transition: 0.3s;
+}
+
+.shop-link:hover {
+    color: #f8d90f;
+}
+
+/*************** categories container css ended  *******************/
+
+/*************** limited collecton css started  *******************/
+
+.limited-collection-main-cntr {
+    margin-top: 130px;
+}
 
 .limited-collection-banner {
     width: 100%;
@@ -724,11 +691,12 @@ body {
     background-repeat: no-repeat;
 }
 
+/*************** limited collecton css ended  *******************/
+
 /*************** products show case tab view started  *******************/
 
 .showcase {
-    padding-top: 50px;
-    padding-bottom: 80px;
+    margin-top: 130px;
 }
 
 .showcase-tabs {
@@ -781,6 +749,184 @@ body {
 }
 
 /*************** products show case tab view ended  *******************/
+
+/*************** owl carousel css start  *******************/
+
+.owl-carousel-main-cntr {
+  margin-top: 130px;
+}
+
+.sub-heading {
+  color: #777;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.main-heading {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+/* Carousel Card */
+.carousel-card {
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.carousel-card:hover {
+  transform: translateY(-10px);
+}
+
+.carousel-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.carousel-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Content Inside Card */
+.card-content {
+  padding: 15px;
+}
+
+.card-content h4 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.card-content p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.btn-shop {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 25px;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-shop:hover {
+  background: #ff9800;
+  color: #000;
+}
+
+/* Owl Navigation */
+.owl-nav button {
+  position: absolute;
+  top: 40%;
+  background: rgba(0,0,0,0.6) !important;
+  color: #fff !important;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  font-size: 22px !important;
+  transition: 0.3s;
+}
+
+.owl-nav button.owl-prev { left: -50px; }
+.owl-nav button.owl-next { right: -50px; }
+
+.owl-nav button:hover {
+  background: #ff9800 !important;
+  color: #000 !important;
+}
+
+/* Dots */
+.owl-dots {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.owl-dots .owl-dot span {
+  width: 12px;
+  height: 12px;
+  background: #ccc;
+  display: inline-block;
+  margin: 5px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.owl-dots .owl-dot.active span {
+  background: #000;
+  transform: scale(1.2);
+}
+
+/*************** owl carousel css ended  *******************/
+
+/*************** footer css start  *******************/
+
+.footer {
+    background-color: #fff;
+    /* Same clean white like header */
+    color: var(--text-color);
+    padding: 50px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.footer h5 {
+    color: #ff9800;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.footer p {
+    padding-left: 20px;
+    font-size: 0.95rem;
+    color: #ff9800;
+}
+
+.footer-link {
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-link:hover {
+    color: #ff9800;
+}
+
+.footer-icon {
+    color: #ff9800;
+    font-size: 1.5rem;
+    margin: 0 8px;
+    transition: all 0.2s ease-in;
+}
+
+.footer-icon:hover {
+    color: #ff9800;
+    transform: translateY(-3px);
+}
+
+.footer hr {
+    margin: 2rem 0;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.footer p.text-center {
+    font-size: 0.9rem;
+    color: #ff9800;
+}
+
+/*************** footer css ended  *******************/
 
 /*************** login container (login page) css start  *******************/
 
@@ -1067,7 +1213,6 @@ h3 {
 
 /*************** cart table (cart page) css ended  *******************/
 
-
 /*************** product details container (view products details) css start *******************/
 
 .preview-img {
@@ -1146,59 +1291,3 @@ h3 {
     object-fit: cover;
     border-radius: 12px;
 }
-
-/*************** footer css start  *******************/
-
-.footer {
-    background-color: #fff;
-    /* Same clean white like header */
-    color: var(--text-color);
-    padding: 50px 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.footer h5 {
-    color: #ff9800;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-
-.footer p {
-    padding-left: 20px;
-    font-size: 0.95rem;
-    color: #ff9800;
-}
-
-.footer-link {
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.footer-link:hover {
-    color: #ff9800;
-}
-
-.footer-icon {
-    color: #ff9800;
-    font-size: 1.5rem;
-    margin: 0 8px;
-    transition: all 0.2s ease-in;
-}
-
-.footer-icon:hover {
-    color: #ff9800;
-    transform: translateY(-3px);
-}
-
-.footer hr {
-    margin: 2rem 0;
-    border-color: rgba(0, 0, 0, 0.1);
-}
-
-.footer p.text-center {
-    font-size: 0.9rem;
-    color: #ff9800;
-}
-
-/*************** footer css ended  *******************/
