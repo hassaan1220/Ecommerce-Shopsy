@@ -379,10 +379,12 @@ body {
     font-family: "Poppins", sans-serif;
     background-color: #ff9800;
 }
+
 .dropdown-btn:hover {
     color: white;
     background-color: #ff9800;
 }
+
 .dropdown-btn:active {
     color: white;
     background-color: #ff9800;
@@ -530,6 +532,109 @@ body {
 
 /*************** Slider CSS End *******************/
 
+.limited-collection-main-cntr {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.catogeries-main-cntr {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.category-card {
+    position: relative;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    /* hides zoomed image overflow */
+    cursor: pointer;
+    color: #fff;
+}
+
+/* background image goes on a pseudo-element */
+.category-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: transform 0.5s ease;
+    /* smooth zoom */
+    z-index: 1;
+    border-radius: 5px;
+}
+
+#catogery-card-1::before {
+    background-image: url("../uploads/category-cntr-1.jpg");
+}
+
+#catogery-card-2::before {
+    background-image: url("../uploads/category-cntr-2.jpg");
+}
+
+#catogery-card-3::before {
+    background-image: url("../uploads/category-cntr-3.jpg");
+}
+
+/* gradient overlay */
+.category-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+    z-index: 2;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* text & button */
+.category-card h5,
+.category-card .btn {
+    position: relative;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+    margin: 5px 0;
+}
+
+.category-card .btn {
+    color: black;
+    background-color: white;
+    transition: all 0.4s ease;
+}
+
+/* hover effects */
+.category-card:hover::before {
+    transform: scale(1.2);
+    /* zoom image */
+}
+
+.category-card:hover::after {
+    opacity: 1;
+    /* dark overlay visible */
+}
+
+.category-card:hover h5,
+.category-card:hover .btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 
 /*************** products grid css start  *******************/
 
@@ -541,7 +646,6 @@ body {
 /* Product Card Styling */
 .card {
     border: none;
-    border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -559,6 +663,15 @@ body {
 
 /* Product info text */
 .card-body h6 {
+    color: black;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-body h6 span {
+    color: #ff9800;
+    font-family: "Poppins", sans-serif;
     font-weight: 600;
     margin: 0;
 }
@@ -600,8 +713,23 @@ body {
 
 /*************** products grid css ended  *******************/
 
+/* limited-collection-banner */
+
+.limited-collection-banner {
+    width: 100%;
+    height: 500px;
+    background-image: url("../uploads/limited-collection-banner.png");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 
 /*************** products show case tab view started  *******************/
+
+.showcase {
+    padding-top: 50px;
+    padding-bottom: 80px;
+}
 
 .showcase-tabs {
     margin-bottom: 20px;
@@ -636,6 +764,20 @@ body {
 
 .showcase .card:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.tab-view-cntr h6 {
+    color: black;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    margin: 0;
+}
+
+.tab-view-cntr h6 span {
+    color: #ff9800;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    margin: 0;
 }
 
 /*************** products show case tab view ended  *******************/

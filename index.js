@@ -320,32 +320,6 @@ app.get('/view-product/:id', verifyToken, (req, res) => {
     });
 });
 
-// user cart route
-app.get('/cart', verifyToken, (req, res) => {
-    // fetching the user id from the token
-    const userId = req.user.id;
-
-    // db query for fetching the user
-    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
-    db.query(SelectQuery, [userId], (err, users) => {
-        if (err) {
-            return res.send("Database Error");
-        } if (users.length === 0) {
-            return res.send("No such user in the database");
-        }
-        const user = users[0];
-
-        // Fetching the products in the cart of the respective user
-        const SelectCartQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
-        db.query(SelectCartQuery, [userId], (err, result) => {
-            if (err) {
-                return res.send("Error while fetching the cart items");
-            }
-            res.render('cart.ejs', { user, cartItems: result });
-        })
-    })
-});
-
 // add-to-cart route
 app.post('/add-to-cart/:id', verifyToken, (req, res) => {
     const userId = req.user.id;
@@ -381,6 +355,32 @@ app.post('/add-to-cart/:id', verifyToken, (req, res) => {
                 res.redirect('/cart');
             });
         }
+    })
+});
+
+// user cart route
+app.get('/cart', verifyToken, (req, res) => {
+    // fetching the user id from the token
+    const userId = req.user.id;
+
+    // db query for fetching the user
+    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
+    db.query(SelectQuery, [userId], (err, users) => {
+        if (err) {
+            return res.send("Database Error");
+        } if (users.length === 0) {
+            return res.send("No such user in the database");
+        }
+        const user = users[0];
+
+        // Fetching the products in the cart of the respective user
+        const SelectCartQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
+        db.query(SelectCartQuery, [userId], (err, result) => {
+            if (err) {
+                return res.send("Error while fetching the cart items");
+            }
+            res.render('cart.ejs', { user, cartItems: result });
+        })
     })
 });
 

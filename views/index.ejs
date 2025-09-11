@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
 
@@ -149,10 +150,34 @@
         </div>
     </div>
 
+    <!-- Categories section -->
+    <div class="container catogeries-main-cntr">
+        <div class="row g-2">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div class="category-card" id="catogery-card-1">
+                    <h5>Women Dresses</h5>
+                    <button type="button" class="btn btn-sm">view</button>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div class="category-card" id="catogery-card-2">
+                    <h5>Jeans & Cargo Pants</h5>
+                    <button type="button" class="btn btn-sm">view</button>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                <div class="category-card" id="catogery-card-3">
+                    <h5>Outwears</h5>
+                    <button type="button" class="btn btn-sm">view</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Products cards -->
-    <div class="container mt-5 mb-5 p-2">
+    <div class="container products-cards-main-cntr pt-5">
         <div class="row">
-            <div class="text-center">
+            <div class="text-left">
                 <p>Best Seller This Week</p>
                 <h3>MOST SELLING THIS WEEK</h3>
             </div>
@@ -167,7 +192,7 @@
                             <h6>
                                 <%= product.name %>
                             </h6>
-                            <h6>$<%= product.price %>
+                            <h6><span>$<%= product.price %></span>
                             </h6>
                         </div>
 
@@ -182,17 +207,22 @@
                                 </button>
                             </form>
                             <a href="/view-product/<%= product.product_id %>" class="btn">
-                                <i class="bi bi-eye"></i>
+                                <i class="bi bi-eye-fill"></i>
                             </a>
                         </div>
                     </div>
                 </div>
-            <% }); %>
+                <% }); %>
         </div>
     </div>
 
+    <!-- content box -->
+    <div class="container-fluid limited-collection-main-cntr">
+        <div class="container-fluid limited-collection-banner"></div>
+    </div>
+
     <!-- Showcase tab view Section -->
-    <div class="container showcase mt-5 mb-5 p-2">
+    <div class="container showcase">
         <!-- Tabs -->
         <div class="showcase-tabs">
             <div class="row">
@@ -218,11 +248,11 @@
                             <img src="<%= product.image_url %>" class="card-img-top" alt="..." height="350px">
                             <div class="card-body">
 
-                                <div class="container">
+                                <div class="container tab-view-cntr text-center">
                                     <h6>
                                         <%= product.name %>
                                     </h6>
-                                    <h6>$<%= product.price %>
+                                    <h6><span>$<%= product.price %></span>
                                     </h6>
                                 </div>
 
