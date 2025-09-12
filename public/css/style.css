@@ -538,9 +538,17 @@ body {
     margin-top: 100px;
 }
 
-.products-heading-cntr {
-    text-align: left;
+.products-heading-cntr h3 {
+    color: #ff9800;
+    font-family: "Poppins", sans-serif;
     font-weight: 600;
+}
+
+.products-heading-cntr p a {
+    color: #333;
+    text-decoration: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
 }
 
 /* Product Card Styling */
@@ -563,7 +571,7 @@ body {
 
 /* Product info text */
 .card-body h6 {
-    color: black;
+    color: #333;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     margin: 0;
@@ -640,8 +648,24 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 8px;
+    z-index: 1;
+}
+
+.category-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
+    z-index: 0;
+}
+
+.category-box:hover::before {
+    transform: scale(1.1);
 }
 
 .category-box .content {
@@ -651,14 +675,17 @@ body {
 
 .category-box h2,
 .category-box h3 {
+    color: white;
     font-weight: 700;
-    margin: 5px 0;
+    font-family: 'Poppins', sans-serif;
 }
 
-.category-box .sub-heading {
-    font-size: 14px;
+.category-box p {
+    font-size: 15px;
     letter-spacing: 1px;
-    opacity: 0.8;
+    color: white;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
 }
 
 .shop-link {
@@ -685,10 +712,11 @@ body {
 .limited-collection-banner {
     width: 100%;
     height: 500px;
-    background-image: url("../uploads/limited-collection-banner.png");
-    background-position: center;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+        url("../uploads/limited-collection-banner.png");
     background-size: cover;
-    background-repeat: no-repeat;
+    background-position: center;
 }
 
 /*************** limited collecton css ended  *******************/
@@ -703,6 +731,12 @@ body {
     margin-bottom: 20px;
 }
 
+.showcase-tab-view-heading-cntr h3 {
+    color: #ff9800;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+}
+
 .showcase-tab {
     cursor: pointer;
     font-weight: 600;
@@ -713,7 +747,8 @@ body {
 }
 
 .showcase-tab:hover {
-    background: #f1f1f1;
+    color: #fff;
+    background: #ff9800;
 }
 
 .showcase-tab.active {
@@ -735,7 +770,7 @@ body {
 }
 
 .tab-view-cntr h6 {
-    color: black;
+    color: #333;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     margin: 0;
@@ -753,121 +788,114 @@ body {
 /*************** owl carousel css start  *******************/
 
 .owl-carousel-main-cntr {
-  margin-top: 130px;
+    margin-top: 130px;
 }
 
-.sub-heading {
-  color: #777;
-  font-size: 15px;
-  margin-bottom: 5px;
-}
-
-.main-heading {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 30px;
+.owl-carousel-main-cntr-heading h3 {
+    color: #ff9800;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
 }
 
 /* Carousel Card */
 .carousel-card {
-  background: #fff;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-  text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    text-align: center;
 }
 
 .carousel-card:hover {
-  transform: translateY(-10px);
+    transform: translateY(-10px);
 }
 
 .carousel-card img {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.carousel-card:hover img {
-  transform: scale(1.05);
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.4s ease;
 }
 
 /* Content Inside Card */
 .card-content {
-  padding: 15px;
+    padding: 15px;
 }
 
 .card-content h4 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 10px 0;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px 0;
 }
 
 .card-content p {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 12px;
 }
 
 .btn-shop {
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 25px;
-  background: #000;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: 0.3s;
+    color: #fff;
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 25px;
+    background: #ff9800;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
 .btn-shop:hover {
-  background: #ff9800;
-  color: #000;
+    color: white;
+    background: #ff9800;
 }
 
 /* Owl Navigation */
 .owl-nav button {
-  position: absolute;
-  top: 40%;
-  background: rgba(0,0,0,0.6) !important;
-  color: #fff !important;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  font-size: 22px !important;
-  transition: 0.3s;
+    position: absolute;
+    top: 40%;
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 22px !important;
+    transition: 0.3s;
 }
 
-.owl-nav button.owl-prev { left: -50px; }
-.owl-nav button.owl-next { right: -50px; }
+.owl-nav button.owl-prev {
+    left: -50px;
+}
+
+.owl-nav button.owl-next {
+    right: -50px;
+}
 
 .owl-nav button:hover {
-  background: #ff9800 !important;
-  color: #000 !important;
+    background: #ff9800 !important;
+    color: #000 !important;
 }
 
-/* Dots */
 .owl-dots {
+  display: block !important;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
-.owl-dots .owl-dot span {
+.owl-dot span {
   width: 12px;
   height: 12px;
-  background: #ccc;
+  background: #ff9800;
   display: inline-block;
-  margin: 5px;
   border-radius: 50%;
-  transition: all 0.3s ease;
+  margin: 5px;
 }
 
-.owl-dots .owl-dot.active span {
-  background: #000;
-  transform: scale(1.2);
+.owl-dot.active span {
+  background: #ff9800; /* Active color */
 }
 
 /*************** owl carousel css ended  *******************/
