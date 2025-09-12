@@ -12,11 +12,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
+
+  <!-- Owl Carousel CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
 
   <!-- custom css file link -->
   <link rel="stylesheet" href="/css/style.css">
@@ -113,31 +115,43 @@
   </nav>
   <div class="menu-overlay"></div>
 
-  <!-- Desktop Navbar -->
-  <nav class="desktop-navbar">
-    <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-    <ul class="desktop-nav-list">
-      <li class="m-1"><a href="/">Home</a></li>
-      <li class="m-1"><a href="/about">About</a></li>
-      <li class="m-1"><a href="/services">Services</a></li>
-      <li class="m-1"><a href="/contact">Contact</a></li>
+  <!-- Navbar -->
+  <nav class="desktop-navbar bg-body-tertiary">
+    <div class="container d-flex justify-content-between align-items-center">
 
-      <% if (user) { %>
-        <li>
-          <a href="#">
-            <i class="ti ti-user" style="font-size: 30px;"></i>
-          </a>
-        </li>
-        <li><a href="/cart"><i class="ti ti-shopping-bag" style="font-size: 30px;"></i></a></li>
-        <li><a href="/logout"><i class="ti ti-logout-2" style="font-size: 30px;"></i></a></li>
-        <% } else { %>
-          <li><a href="/login">Login/Signup</a></li>
+      <!-- Left: Logo -->
+      <div class="navbar-left">
+        <a href="/">
+          <img src="/uploads/logo.png" alt="Logo" class="navbar-logo">
+        </a>
+      </div>
+
+      <!-- Right: Nav Links + Cart + Login -->
+      <ul class="desktop-nav-list m-0 list-unstyled d-flex align-items-center">
+        <li class="mx-0"><a href="/">Home</a></li>
+        <li class="mx-0"><a href="/about">About</a></li>
+        <li class="mx-0"><a href="/services">Services</a></li>
+        <li class="mx-0"><a href="/contact">Contact</a></li>
+        <li class="mx-0"><a href="/cart"><i class="bi bi-cart-fill" style="font-size: 28px;"></i></a></li>
+        <% if (user) { %>
+          <div class="dropdown">
+            <button class="btn dropdown-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <%= user.first_name %>
+                <%= user.last_name %>
+            </button>
+            <ul class="dropdown-menu p-1">
+              <li class="mx-0"><a href="/profile">Profile</a></li>
+              <li class="mx-0"><a href="/logout">Logout</a></li>
+            </ul>
+          </div>
           <% } %>
-    </ul>
+      </ul>
+    </div>
   </nav>
 
   <!-- product details section -->
-  <div class="container p-5">
+  <div class="container mt-5 mb-5">
     <div class="row" style="justify-content: center;">
       <!-- product images container -->
       <div class="container col-sm-12 col-md-6 col-lg-6 box-1">
@@ -180,7 +194,7 @@
             </h4>
 
             <!-- Availability -->
-            <p class="stock">✔ In Stock</p>
+            <p class="stock">In Stock</p>
 
             <div class="add-row">
               <form action="/add-to-cart/<%= product.product_id %>" method="POST" class="d-flex">
@@ -195,7 +209,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="footer mt-1 bg-body-tertiary">
+  <footer class="footer mt-5 bg-body-tertiary">
     <div class="container">
       <div class="row">
         <!-- About Section -->
@@ -233,10 +247,16 @@
     </div>
   </footer>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/style.js"></script>
+  <!-- Javascript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Owl Carousel JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+  <!-- externa js file link -->
+  <script src="/js/style.js"></script>
 </body>
 
 </html>

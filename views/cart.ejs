@@ -114,46 +114,47 @@
     </nav>
     <div class="menu-overlay"></div>
 
-    <!-- Desktop Navbar -->
-    <nav class="desktop-navbar bg-body-tertiary d-flex align-items-center">
-        <!-- Left: Logo -->
-        <div class="navbar-left">
-            <a href="/"><img src="/uploads/logo.png" alt="Logo" class="navbar-logo"></a>
-        </div>
+    <!-- Navbar -->
+    <nav class="desktop-navbar bg-body-tertiary">
+        <div class="container d-flex justify-content-between align-items-center">
 
-        <!-- Center: Nav Links -->
-        <ul class="desktop-nav-list d-flex justify-content-center m-0">
-            <li class="m-2"><a href="/">Home</a></li>
-            <li class="m-2"><a href="/about">About</a></li>
-            <li class="m-2"><a href="/services">Services</a></li>
-            <li class="m-2"><a href="/contact">Contact</a></li>
-        </ul>
-
-        <% if (user) { %>
-            <!-- Right: Cart + Login -->
-            <div class="navbar-right d-flex align-items-center gap-3">
-                <a href="/cart" class="btn btn-sm cart-link"><i class="ti ti-shopping-bag"></i></a>
-                <div class="dropdown">
-                    <button class="btn btn-sm dropdown-toggle login-link" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="ti ti-user"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="/profile" class="dropdown-item">Profile</a></li>
-                        <li><a href="/logout" class="dropdown-item">Logout</a></li>
-                    </ul>
-                </div>
+            <!-- Left: Logo -->
+            <div class="navbar-left">
+                <a href="/">
+                    <img src="/uploads/logo.png" alt="Logo" class="navbar-logo">
+                </a>
             </div>
-            <% } %>
+
+            <!-- Right: Nav Links + Cart + Login -->
+            <ul class="desktop-nav-list m-0 list-unstyled d-flex align-items-center">
+                <li class="mx-0"><a href="/">Home</a></li>
+                <li class="mx-0"><a href="/about">About</a></li>
+                <li class="mx-0"><a href="/services">Services</a></li>
+                <li class="mx-0"><a href="/contact">Contact</a></li>
+                <li class="mx-0"><a href="/cart"><i class="bi bi-cart-fill" style="font-size: 28px;"></i></a></li>
+                <% if (user) { %>
+                    <div class="dropdown">
+                        <button class="btn dropdown-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <%= user.first_name %>
+                                <%= user.last_name %>
+                        </button>
+                        <ul class="dropdown-menu p-1">
+                            <li class="mx-0"><a href="/profile">Profile</a></li>
+                            <li class="mx-0"><a href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                    <% } %>
+            </ul>
+        </div>
     </nav>
 
-    <div class="container p-3">
-        <h3>Your Cart</h3>
-        <!-- Cart Table -->
-        <div class="card shadow-sm border-0">
+    <div class="container mt-5 mb-5">
+        <!-- cart table -->
+        <div class="card border-0">
             <div class="card-body">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark">
+                <table class="table align-left">
+                    <thead class="table-light text-dark">
                         <tr>
                             <th>#</th>
                             <th>Product</th>
@@ -206,29 +207,29 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-4 text-white">
+    <footer class="footer mt-5 bg-body-tertiary">
         <div class="container">
             <div class="row">
                 <!-- About Section -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
                     <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-                    <p>Your one-stop shop for all your needs. We provide the best quality products at affordable prices.
-                    </p>
+                    <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at
+                        affordable prices.</p>
                 </div>
 
                 <!-- Quick Links -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
                     <h5 class="fw-bold">Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">Home</a></li>
-                        <li><a href="#" class="footer-link">About</a></li>
-                        <li><a href="#" class="footer-link">Services</a></li>
-                        <li><a href="/login" class="footer-link">Login / Signup</a></li>
+                        <li><a href="#" class="footer-link text-muted">Home</a></li>
+                        <li><a href="#" class="footer-link text-muted">About</a></li>
+                        <li><a href="#" class="footer-link text-muted">Services</a></li>
+                        <li><a href="/login" class="footer-link text-muted">Login / Signup</a></li>
                     </ul>
                 </div>
 
                 <!-- Social Media -->
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 footer-inner-box">
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
                     <h5 class="fw-bold">Follow Us</h5>
                     <div class="d-flex gap-3">
                         <a href="#" class="footer-icon"><i class="bi bi-facebook"></i></a>
@@ -239,7 +240,8 @@
                 </div>
             </div>
             <hr class="text-white">
-            <p class="text-center m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.</p>
+            <p class="text-center text-muted m-0">© <%= new Date().getFullYear() %> My Ecommerce. All Rights Reserved.
+            </p>
         </div>
     </footer>
 

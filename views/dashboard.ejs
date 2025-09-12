@@ -12,11 +12,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
+
+    <!-- Owl Carousel CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/icofont@1.0.1/icofont.min.css">
 
     <!-- custom css file link -->
     <link rel="stylesheet" href="/css/style.css">
@@ -133,13 +135,15 @@
                 <li class="mx-0"><a href="/contact">Contact</a></li>
                 <li class="mx-0"><a href="/cart"><i class="bi bi-cart-fill" style="font-size: 28px;"></i></a></li>
                 <% if (user) { %>
+
                     <div class="dropdown">
-                        <button class="btn dropdown-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn dropdown-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
                             <%= user.first_name %><%= user.last_name %>
                         </button>
-                        <ul class="dropdown-menu p-1">
-                            <li class="mx-0"><a href="/profile">Profile</a></li>
-                            <li class="mx-0"><a href="/logout">Logout</a></li>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
                         </ul>
                     </div>
                 <% } %>
@@ -188,11 +192,14 @@
     </div>
 
     <!-- Products cards -->
-    <div class="container mt-5 mb-5 p-2">
+    <div class="container products-cards-main-cntr">
         <div class="row">
-            <div class="text-center">
-                <p>Best Seller This Week</p>
-                <h3>MOST SELLING THIS WEEK</h3>
+            <div class="products-heading-cntr col-md-6 text-left">
+                <h3>FEATURED PRODUCTS</h3>
+            </div>
+            <div class="products-heading-cntr col-md-6"
+                style="display: flex; justify-content: flex-end; align-items: center;">
+                <p><a href="">View All Products →</a></p>
             </div>
         </div>
         <div class="row g-1">
@@ -205,7 +212,7 @@
                             <h6>
                                 <%= product.name %>
                             </h6>
-                            <h6>$<%= product.price %>
+                            <h6><span>$<%= product.price %></span>
                             </h6>
                         </div>
 
@@ -220,7 +227,7 @@
                                 </button>
                             </form>
                             <a href="/view-product/<%= product.product_id %>" class="btn">
-                                <i class="bi bi-eye"></i>
+                                <i class="bi bi-eye-fill"></i>
                             </a>
                         </div>
                     </div>
@@ -229,19 +236,61 @@
         </div>
     </div>
 
+    <!-- Categories Section -->
+    <div class="container categories-main-cntr">
+        <div class="row g-3">
+
+            <!-- Left Big Box -->
+            <div class="col-md-6">
+                <div class="category-box big-box" style="background-image: url('../uploads/category-cntr-1.jpg');">
+                    <div class="content">
+                        <p>UNIQUE COLLECTION</p>
+                        <h2>Women Dresses</h2>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Two Small Boxes -->
+            <div class="col-md-6 d-flex flex-column gap-3">
+                <div class="category-box small-box" style="background-image: url('../uploads/category-cntr-2.jpg');">
+                    <div class="content">
+                        <p>BASIC COLLECTION</p>
+                        <h3>Denim Jeans & Pants</h3>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+
+                <div class="category-box small-box" style="background-image: url('../uploads/category-cntr-3.jpg');">
+                    <div class="content">
+                        <p>BEST SELLING PRODUCT</p>
+                        <h3>Outwears</h3>
+                        <a href="#" class="shop-link">Shop Collection →</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- limited collection container -->
+    <div class="container limited-collection-main-cntr">
+        <div class="container-fluid limited-collection-banner"></div>
+    </div>
+
     <!-- Showcase tab view Section -->
-    <div class="container showcase mt-5 mb-5 p-2">
+    <div class="container showcase">
         <!-- Tabs -->
         <div class="showcase-tabs">
             <div class="row">
-                <div class="col-md-6">
-                    <h3>OUR ALL PRODUCTS</h3>
+                <div class="col-md-6 showcase-tab-view-heading-cntr">
+                    <h3>BEST SELLING PRODUCTS</h3>
                 </div>
                 <div class="col-md-6 gap-1" style="text-align: right;">
-                    <div class="showcase-tab btn btn-md active" data-tab="all">All</div>
-                    <div class="showcase-tab btn btn-md" data-tab="sale">Sale</div>
-                    <div class="showcase-tab btn btn-md" data-tab="bestseller">Bestseller</div>
-                    <div class="showcase-tab btn btn-md" data-tab="featured">Featured</div>
+                    <div class="showcase-tab btn btn-sm active" data-tab="all">All</div>
+                    <div class="showcase-tab btn btn-sm" data-tab="sale">Sale</div>
+                    <div class="showcase-tab btn btn-sm" data-tab="bestseller">Bestseller</div>
+                    <div class="showcase-tab btn btn-sm" data-tab="featured">Featured</div>
                 </div>
             </div>
         </div>
@@ -256,11 +305,11 @@
                             <img src="<%= product.image_url %>" class="card-img-top" alt="..." height="350px">
                             <div class="card-body">
 
-                                <div class="container">
+                                <div class="container tab-view-cntr text-center">
                                     <h6>
                                         <%= product.name %>
                                     </h6>
-                                    <h6>$<%= product.price %>
+                                    <h6><span>$<%= product.price %></span>
                                     </h6>
                                 </div>
 
@@ -320,18 +369,73 @@
     </div>
 
     <!-- Owl Carousel Section -->
-    <div class="container mt-5">
+    <div class="container owl-carousel-main-cntr">
         <div class="row">
-            <div class="text-center">
-                <p>Elegance in Every Thread</p>
-                <h3>Our Latest Styles</h3>
+            <div class="owl-carousel-main-cntr-heading text-left">
+                <h3>OUR LATEST STYLES</h3>
             </div>
         </div>
+
         <div class="owl-carousel owl-theme">
-            <div class="item"><img src="/uploads/owl-carousel-1.jpg" alt="Dresses"></div>
-            <div class="item"><img src="/uploads/owl-carousel-2.jpg" alt="Tops"></div>
-            <div class="item"><img src="/uploads/owl-carousel-3.jpg" alt="Outerwear"></div>
-            <div class="item"><img src="/uploads/owl-carousel-4.jpg" alt="Jeans"></div>
+            <!-- Item 1 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/dresses.jpg" alt="Dresses">
+                    <div class="card-content">
+                        <h4>Dresses</h4>
+                        <p>Discover chic and elegant dresses for every occasion.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/tops.JPG" alt="Tops">
+                    <div class="card-content">
+                        <h4>Tops</h4>
+                        <p>Trendy tops that elevate your casual and formal looks.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/outwears.png" alt="Outerwear">
+                    <div class="card-content">
+                        <h4>Outerwears</h4>
+                        <p>Stay warm & stylish with our jackets and coats.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/jeans.jpg" alt="Jeans">
+                    <div class="card-content">
+                        <h4>Jeans</h4>
+                        <p>Perfect fit jeans that combine comfort with fashion.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="item">
+                <div class="carousel-card">
+                    <img src="/uploads/shoes.jpg" alt="Jeans">
+                    <div class="card-content">
+                        <h4>Footwears</h4>
+                        <p>Classic footwears that combine comfort with fashion.</p>
+                        <a href="#" class="btn-shop">Shop Now →</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -377,9 +481,8 @@
     <!-- Javascript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery (required by Owl Carousel) -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <!-- Owl Carousel JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
