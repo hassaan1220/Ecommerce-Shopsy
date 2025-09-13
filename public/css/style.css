@@ -313,6 +313,21 @@ body {
 
 /*************** header css ended (MOBILE NAVBAR) *******************/
 
+/*************** top info container css start *******************/
+
+.info-cntr {
+    color: white;
+    background-color: #ff9800;
+}
+
+.icons {
+    color: white;
+    font-size: 18px;
+}
+
+/*************** top info container css ended *******************/
+
+
 /*************** desktop css start (DESKTOP NAVBAR) *******************/
 
 .desktop-navbar {
