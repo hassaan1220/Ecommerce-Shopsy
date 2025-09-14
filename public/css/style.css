@@ -1343,3 +1343,51 @@ body {
     object-fit: cover;
     border-radius: 12px;
 }
+
+
+.main-checkout-content-cntr {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+.main-checkout-heading-cntr {
+    color: black;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.table-head tr th {
+    color: white;
+    font-weight: 600;
+    background-color: #ff9800;
+    font-family: 'Poppins', sans-serif;
+}
+
+.checkout-total-price-cntr {
+    color: black;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.main-checkout-form-cntr {
+    padding-top: 50px;
+}
+
+.form-label {
+    color: black;
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+}
+
+.place-order-btn {
+    border: none;
+    color: white;
+    background-color: #ff9800;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease-in;
+}
+
+.place-order-btn:hover {
+    color: white;
+    background-color: #ff9800;
+}
