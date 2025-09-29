@@ -4,25 +4,45 @@ dotenv.config();
 
 import express from 'express';
 import bodyParser from "body-parser";
-import mysql from 'mysql';
+import pkg from 'pg';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
+const { Pool } = pkg;
+
 // express app setup
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
-// MySQL pool setup
-const db = mysql.createPool({
-    connectionLimit: 10, // max connections in pool
-    host: process.env.DB_HOST || "127.0.0.1", // safer than localhost
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
+// Postgres pool setup: use DATABASE_URL if available (Render)
+let pool;
+if (process.env.DATABASE_URL) {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+    });
+} else {
+    // fallback to individual env vars (for local dev)
+    pool = new Pool({
+        host: process.env.DB_HOST || "127.0.0.1",
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+        max: 10
+    });
+}
+
+// Test DB connection
+pool.connect()
+    .then(client => {
+        client.release();
+        console.log("✅ Connected to Postgres DB");
+    })
+    .catch(err => console.error("❌ DB Connection Error:", err));
 
 // required middlewares
 app.set('view engine', 'ejs');
@@ -31,50 +51,53 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-// jwt token verification
+// jwt token verification (keeps same behavior)
 function verifyToken(req, res, next) {
-    // Get token from cookies or Authorization header
     const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
     if (!token) {
-        return res.redirect('/login'); // no token found
+        return res.redirect('/login');
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             console.error("JWT Error:", err);
-            return res.redirect('/login'); // invalid token
+            return res.redirect('/login');
         }
-        req.user = decoded; // { id, username }
+        req.user = decoded;
         next();
     });
 }
 
-/* ----------------- GOOGLE STRATEGY ----------------- */
+/* ----------------- GOOGLE STRATEGY (Postgres) ----------------- */
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
-}, (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails[0].value;
-    const name = profile.displayName;
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        const email = profile.emails?.[0]?.value;
+        const name = profile.displayName || profile.name?.givenName || '';
 
-    const sql = 'SELECT * FROM users WHERE email = ?';
-    db.query(sql, [email], (err, results) => {
-        if (err) return done(err);
+        if (!email) return done(new Error("No email returned from Google"));
 
-        if (results.length > 0) {
-            // User exists
-            return done(null, results[0]);
-        } else {
-            // Create new user
-            const insertSql = 'INSERT INTO users (first_name, email) VALUES (?, ?)';
-            db.query(insertSql, [name, email], (err, result) => {
-                if (err) return done(err);
-                const newUser = { id: result.insertId, first_name: name, email };
-                return done(null, newUser);
-            });
+        // check if user exists
+        const userRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (userRes.rows.length > 0) {
+            return done(null, userRes.rows[0]);
         }
-    });
+
+        // create new user, return the new row
+        const insertRes = await pool.query(
+            'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, '', email, ''] // empty last_name and password for OAuth users
+        );
+
+
+        return done(null, insertRes.rows[0]);
+    } catch (err) {
+        console.error("Google OAuth error:", err);
+        return done(err);
+    }
 }));
 
 // Google Auth Routes
@@ -84,383 +107,287 @@ app.get(
     '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login', session: false }),
     (req, res) => {
-        // req.user is returned from GoogleStrategy
         const user = req.user;
-
-        // Sign JWT
         const token = jwt.sign(
             { id: user.id, first_name: user.first_name || user.name, email: user.email, role: user.role || 'user' },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 
-        // Set cookie (httpOnly for security)
-        res.cookie("token", token, { httpOnly: true, secure: false });
-
-        // Redirect to dashboard
+        res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
         res.redirect("/dashboard");
     }
 );
 
-app.get('/', (req, res) => {
+// Home route → show products
+app.get('/', async (req, res) => {
     const token = req.cookies?.token;
-
     if (token) {
         try {
-            // Verify JWT token
             jwt.verify(token, process.env.JWT_SECRET);
-
-            // Token sahi aur expire nahi hua → dashboard par bhej do
             return res.redirect('/dashboard');
         } catch (err) {
-            // Token galat ya expire → ignore, normal page dikhao
             console.log("Invalid/Expired Token:", err.message);
         }
     }
 
-    // Yahan tab ayega jab token hi na ho ya invalid ho
-    db.query('SELECT * FROM products', (err, products) => {
-        if (err) {
-            console.error("DB Error:", err);
-            return res.status(500).send("Server error");
-        }
-
-        res.render('index', { products, isLoggedIn: false });
-    });
+    try {
+        const result = await pool.query('SELECT * FROM products');
+        res.render('index', { products: result.rows, isLoggedIn: false });
+    } catch (err) {
+        console.error("DB Error:", err);
+        return res.status(500).send("Server error");
+    }
 });
-
 
 // login page get route
-app.get('/login', (req, res) => {
-    res.render("login.ejs");
-});
+app.get('/login', (req, res) => res.render("login.ejs"));
 
 // user signup page route
-app.get('/signup', (req, res) => {
-    res.render("signup.ejs");
-});
+app.get('/signup', (req, res) => res.render("signup.ejs"));
 
 // forgot password route
-app.get('/forgotPassword', (req, res) => {
-    res.render("forgot-password.ejs");
-});
+app.get('/forgotPassword', (req, res) => res.render("forgot-password.ejs"));
 
 // dashboard page route
-app.get('/dashboard', verifyToken, (req, res) => {
-    const userId = req.user.id;
+app.get('/dashboard', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+        if (userRes.rows.length === 0) return res.send("no user found");
+        const user = userRes.rows[0];
 
-    // Fetch user info
-    db.query('SELECT * FROM users WHERE id = ?', [userId], (err, users) => {
-        if (err) {
-            return res.status(500).send("Database error");
-        }
-        if (users.length === 0) {
-            return res.send("no user found");
-        }
-        // fetch the results
-        const user = users[0];
+        const productsRes = await pool.query('SELECT * FROM products');
+        if (productsRes.rows.length === 0) return res.send("No Products");
 
-        // Fetch Products on dashboard
-        const productsQuery = 'SELECT * FROM products';
-        db.query(productsQuery, (err, products) => {
-            if (err) {
-                return res.status(500).send("Database error");
-            }
-            if (products.length === 0) {
-                return res.send("No Products");
-            }
-            if (products.length > 0) {
-                res.render("dashboard.ejs", { user, products });
-            }
-        });
-    });
+        res.render("dashboard.ejs", { user, products: productsRes.rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
 });
 
 // user signup post route
-app.post('/signup', (req, res) => {
-    // Extracting user details from the request body through body-parser
-    const { first_name, last_name, email, password } = req.body;
-    // check if user already exists
-    const userCheckQuery = 'SELECT * FROM users WHERE email	= ?';
-    db.query(userCheckQuery, [email], async (err, results) => {
-        if (err) {
-            return res.status(500).send("Database error");
-        }
-        if (results.length > 0) {
+app.post('/signup', async (req, res) => {
+    try {
+        const { first_name, last_name, email, password } = req.body;
+
+        const checkRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (checkRes.rows.length > 0) {
             return res.status(400).send('User already exists');
         }
-        // Hash the password using bcrypt
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        // insert user into the database
-        const insertQuery = 'INSERT INTO users(first_name, last_name, email, password) VALUES (?, ?, ?, ?)';
-        db.query(insertQuery, [first_name, last_name, email, hashedPassword], (err) => {
-            if (err) {
-                return res.status(500).send("Database error");
-            }
-            // Redirect to login page after successful signup
-            res.redirect('/login');
-        });
-    });
+
+        await pool.query(
+            'INSERT INTO users(first_name, last_name, email, password) VALUES ($1, $2, $3, $4)',
+            [first_name, last_name, email, hashedPassword]
+        );
+
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
 });
 
 // user login post route
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
+app.post("/login", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
 
-    // fetching the user according to the provided email
-    const query = 'SELECT * FROM users WHERE email = ?';
-
-    // query execution for checking whether the user with provided email is present or not
-    db.query(query, [email], async (err, users) => {
-        // database error handling
-        if (err) {
-            return res.status(500).send("Database error");
-        }
-        // in case any user is not present
-        if (users.length === 0) {
+        if (result.rows.length === 0) {
             return res.send("no user found with this email!");
         }
 
-        // and if it is so fetch it and save it in the variable
-        const user = users[0];
-
-        // comparing the user credentials(password) for authorization
+        const user = result.rows[0];
         const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.send("invalid credentials");
-        }
+        if (!match) return res.send("invalid credentials");
 
-        // jwt token
         const token = jwt.sign(
             { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 
-        // Set token in HTTP-Only cookie
-        res.cookie("token", token, { httpOnly: true, secure: false });
-
-        // rendering the dashboard page after successfull login
+        res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
         res.redirect("/dashboard");
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
 });
 
 // new password update route
-app.post('/forgot-password', (req, res) => {
-    // fetching the form data through bodyparser middleware
-    const { email, currentPassword, newPassword, confirmPassword } = req.body;
-    // checking user email whether it is registered or not
-    const query = 'SELECT * FROM users WHERE email = ?';
-    db.query(query, [email], async (err, users) => {
-        // error handling
-        if (err) {
-            return res.status(500).send("Database error");
-        }
-        const storedPassword = users[0].password;
+app.post('/forgot-password', async (req, res) => {
+    try {
+        const { email, currentPassword, newPassword, confirmPassword } = req.body;
+        const usersRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
 
-        // comparing the password
+        if (usersRes.rows.length === 0) return res.send("No such user");
+        const storedPassword = usersRes.rows[0].password;
+
         const match = await bcrypt.compare(currentPassword, storedPassword);
-        if (!match) {
-            return res.send("your current password does not match!");
-        }
+        if (!match) return res.send("your current password does not match!");
 
-        // checking whether the new password is confirmed
-        if (newPassword !== confirmPassword) {
-            return res.send("new password does not match");
-        }
+        if (newPassword !== confirmPassword) return res.send("new password does not match");
 
-        // hashing the new password
         const updatedPassword = await bcrypt.hash(newPassword, 10);
+        await pool.query('UPDATE users SET password = $1 WHERE email = $2', [updatedPassword, email]);
 
-        const updateQuery = 'UPDATE users SET password = ? WHERE email = ?';
-        db.query(updateQuery, [updatedPassword, email], (err) => {
-            if (err) {
-                return res.status(500).send("Database error");
-            }
-            res.redirect('/login');
-        });
-    });
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
 });
 
 // logout route
 app.get('/logout', (req, res) => {
-    // Clear the 'token' cookie
     res.clearCookie('token');
-    // Redirect to login page
     res.redirect('/login');
 });
 
 // view products route
-app.get('/view-product/:id', verifyToken, (req, res) => {
-    // fetching the product id through params
-    const productID = req.params.id;
-    const userId = req.user.id;
+app.get('/view-product/:id', verifyToken, async (req, res) => {
+    try {
+        const productID = req.params.id;
+        const userId = req.user.id;
 
-    // fetching the user from the database
-    const selectQuery = 'SELECT * FROM users WHERE id = ?';
-    db.query(selectQuery, [userId], (err, users) => {
-        if (err) {
-            return res.send("database error");
-        }
-        // fetch the results
-        const user = users[0];
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+        if (userRes.rows.length === 0) return res.send("database error");
+        const user = userRes.rows[0];
 
-        // now fetching the products from the database according to thier ids
-        const SelectQuery = 'SELECT * FROM products WHERE product_id = ?'; // declaring the variable and using the parameterized query to ignore the sql injection
-        db.query(SelectQuery, [productID], (err, products) => {
-            // using conditional statements for error handling
-            if (err) {
-                return res.send("Error while fetching the products");
-            } if (products.length === 0) {
-                return res.send("No such product in the database");
-            }
-            const product = products[0];
-            res.render('view-product.ejs', { user, product });
-        });
-    });
+        const productRes = await pool.query('SELECT * FROM products WHERE product_id = $1', [productID]);
+        if (productRes.rows.length === 0) return res.send("No such product in the database");
+        const product = productRes.rows[0];
+
+        res.render('view-product.ejs', { user, product });
+    } catch (err) {
+        console.error(err);
+        res.send("Error while fetching the products");
+    }
 });
 
 // add-to-cart route
-app.post('/add-to-cart/:id', verifyToken, (req, res) => {
-    const userId = req.user.id;
-    const productId = req.params.id;
-    const productQuantity = req.body.quantity || 1;
+app.post('/add-to-cart/:id', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const productId = req.params.id;
+        const productQuantity = parseInt(req.body.quantity) || 1;
 
-    // checking whether this product is in the cart or not
-    const SelectQuery = 'SELECT * FROM cart WHERE user_id = ? and product_id = ?';
-    db.query(SelectQuery, [userId, productId], (err, result) => {
-        // if there is an error while running the query it will return an error
-        if (err) {
-            return res.send("Database Error");
+        // check if exists
+        const selectRes = await pool.query('SELECT * FROM cart WHERE user_id = $1 AND product_id = $2', [userId, productId]);
+
+        if (selectRes.rows.length > 0) {
+            await pool.query('UPDATE cart SET quantity = quantity + $1 WHERE user_id = $2 AND product_id = $3', [productQuantity, userId, productId]);
+        } else {
+            await pool.query('INSERT INTO cart(user_id, product_id, quantity) VALUES ($1, $2, $3)', [userId, productId, productQuantity]);
         }
 
-        // if there is an already an same item in the cart it will update and add the quantity
-        if (result.length > 0) {
-            const updateQuery = 'UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?';
-            db.query(updateQuery, [productQuantity, userId, productId], (err) => {
-                if (err) {
-                    return res.send("Error while updating the product");
-                }
-                res.redirect('/cart');
-            });
-        }
-
-        // and if there is no item in the cart, so then it will add your item in the cart
-        else {
-            const insertQuery = 'INSERT INTO cart(user_id, product_id, quantity) VALUES (?,?,?)';
-            db.query(insertQuery, [userId, productId, productQuantity], (err) => {
-                if (err) {
-                    return res.send("Error while inserting the item in your cart");
-                }
-                res.redirect('/cart');
-            });
-        }
-    })
+        res.redirect('/cart');
+    } catch (err) {
+        console.error(err);
+        res.send("Database Error");
+    }
 });
 
 // user cart route
-app.get('/cart', verifyToken, (req, res) => {
-    // fetching the user id from the token
-    const userId = req.user.id;
+app.get('/cart', verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+        if (userRes.rows.length === 0) return res.send("No such user in the database");
+        const user = userRes.rows[0];
 
-    // db query for fetching the user
-    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
-    db.query(SelectQuery, [userId], (err, users) => {
-        if (err) {
-            return res.send("Database Error");
-        } if (users.length === 0) {
-            return res.send("No such user in the database");
-        }
-        const user = users[0];
+        const cartRes = await pool.query(
+            `SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+       FROM cart c
+       JOIN products p ON c.product_id = p.product_id
+       WHERE c.user_id = $1`,
+            [userId]
+        );
 
-        // Fetching the products in the cart of the respective user
-        const SelectCartQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
-        db.query(SelectCartQuery, [userId], (err, result) => {
-            if (err) {
-                return res.send("Error while fetching the cart items");
-            }
-            res.render('cart.ejs', { user, cartItems: result });
-        })
-    })
+        res.render('cart.ejs', { user, cartItems: cartRes.rows });
+    } catch (err) {
+        console.error(err);
+        res.send("Error while fetching the cart items");
+    }
 });
 
 // remove product route
-app.get('/removeItem/:id', verifyToken, (req, res) => {
-    const userID = req.user.id;
-    const cartID = req.params.id;
+app.get('/removeItem/:id', verifyToken, async (req, res) => {
+    try {
+        const userID = req.user.id;
+        const cartID = req.params.id;
 
-    // sql query to remove item in the cart
-    const DeleteQuery = 'DELETE FROM cart WHERE user_id = ? AND cart_id = ?';
-    db.query(DeleteQuery, [userID, cartID], (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Error while deleting the product.");
-        }
+        await pool.query('DELETE FROM cart WHERE user_id = $1 AND cart_id = $2', [userID, cartID]);
         res.redirect("/cart");
-    });
-})
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error while deleting the product.");
+    }
+});
 
 // check out page route
-app.get('/checkout', verifyToken, (req, res) => {
-    // fetching the user_id from the token
-    const userID = req.user.id;
+app.get('/checkout', verifyToken, async (req, res) => {
+    try {
+        const userID = req.user.id;
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [userID]);
+        if (userRes.rows.length === 0) return res.send("No such user in the database");
+        const user = userRes.rows[0];
 
-    // db query for fetching the user
-    const SelectQuery = 'SELECT * FROM users WHERE id = ?';
-    db.query(SelectQuery, [userID], (err, users) => {
-        if (err) {
-            return res.send("Database Error");
-        } if (users.length === 0) {
-            return res.send("No such user in the database");
-        }
-        const user = users[0];
+        const cartRes = await pool.query(
+            `SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+       FROM cart c
+       JOIN products p ON c.product_id = p.product_id
+       WHERE c.user_id = $1`,
+            [userID]
+        );
 
-        // sql query to fetch the item from the cart according to the user id
-        const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
-        db.query(SelectQuery, [userID], (err, results) => {
-            if (err) {
-                return res.send("Error while fetching the cart items");
-            }
+        let total = 0;
+        cartRes.rows.forEach(item => { total += parseFloat(item.total); });
 
-            // calculating the total
-            let total = 0;
-            results.forEach(item => {
-                total += item.total;
-            });
-
-            res.render('checkout.ejs', { user, cartItems: results, total });
-        })
-    })
+        res.render('checkout.ejs', { user, cartItems: cartRes.rows, total });
+    } catch (err) {
+        console.error(err);
+        res.send("Error while fetching the cart items");
+    }
 });
 
 // place order route
-app.post('/place-order', verifyToken, (req, res) => {
-    // fetching the user id from the token
-    const userID = req.user.id;
-    // fetching the form data from the ejs file through body parser
-    const { full_name, phone_number, address, city, province, payment_method } = req.body;
+app.post('/place-order', verifyToken, async (req, res) => {
+    try {
+        const userID = req.user.id;
+        const { full_name, phone_number, address, city, province, payment_method } = req.body;
 
-    // select query for calculating the total of the cart
-    const SelectQuery = 'SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.user_id = ?';
-    db.query(SelectQuery, [userID], (err, results) => {
-        if (err) {
-            return res.send("Error while fetching the cart items");
-        }
+        const cartRes = await pool.query(
+            `SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+       FROM cart c
+       JOIN products p ON c.product_id = p.product_id
+       WHERE c.user_id = $1`,
+            [userID]
+        );
 
-        // calculating the total
+        if (cartRes.rows.length === 0) return res.send("Your cart is empty");
+
         let total = 0;
-        results.forEach(item => {
-            total += item.total;
-        });
+        cartRes.rows.forEach(item => { total += parseFloat(item.total); });
 
-        const InsertQuery = 'INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        db.query(InsertQuery, [userID, full_name, phone_number, address, city, province, total, payment_method], (err) => {
-            if (err) {
-                return res.send("error while placing the order");
-            }
-            res.send("your order has been placed successfully!");
-        });
-    })
+        await pool.query(
+            `INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [userID, full_name, phone_number, address, city, province, total, payment_method]
+        );
+
+        await pool.query('DELETE FROM cart WHERE user_id = $1', [userID]);
+
+        res.send("your order has been placed successfully!");
+    } catch (err) {
+        console.error(err);
+        res.send("error while placing the order");
+    }
 });
 
 app.listen(port, () => {
