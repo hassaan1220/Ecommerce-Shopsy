@@ -1391,3 +1391,79 @@ body {
     color: white;
     background-color: #ff9800;
 }
+
+
+
+
+
+
+.page-title {
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+/* Table Styling */
+.orders-table table {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.orders-table thead {
+  background: #212529;
+  color: #fff;
+}
+
+.orders-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.orders-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f1f3f6;
+  transform: scale(1.01);
+}
+
+/* Status Badges */
+.status {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.status.delivered {
+  background-color: #28a745;
+}
+
+.status.pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.status.shipped {
+  background-color: #17a2b8;
+}
+
+.status.cancelled {
+  background-color: #dc3545;
+}
+
+/* Buttons */
+.btn-primary {
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
