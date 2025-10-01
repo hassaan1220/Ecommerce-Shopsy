@@ -202,7 +202,7 @@
                                 <td>$<%= item.total %>
                                 </td>
                             </tr>
-                            <% }) %>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
@@ -216,62 +216,62 @@
             <div class="container">
                 <form action="/place-order" method="POST">
 
-                    <div class="row g-1">
-                        <!-- Full Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="full_name" class="form-label">Full Name</label>
-                            <input type="text" id="full_name" name="full_name" class="form-control"
-                                placeholder="your full name..." required>
+                        <div class="row g-1">
+                            <!-- Full Name -->
+                            <div class="col-md-6 mb-3">
+                                <label for="full_name" class="form-label">Full Name</label>
+                                <input type="text" id="full_name" name="full_name" class="form-control"
+                                    placeholder="your full name..." required>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="phone_number" class="form-label">Phone Number</label>
+                                <input type="tel" id="phone_number" name="phone_number" class="form-control"
+                                    placeholder="your phone number..." required>
+                            </div>
                         </div>
 
-                        <!-- Phone Number -->
-                        <div class="col-md-6 mb-3">
-                            <label for="phone_number" class="form-label">Phone Number</label>
-                            <input type="tel" id="phone_number" name="phone_number" class="form-control"
-                                placeholder="your phone number..." required>
-                        </div>
-                    </div>
+                        <div class="row g-1">
+                            <!-- City -->
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" name="city" class="form-control" placeholder="city..."
+                                    required>
+                            </div>
 
-                    <div class="row g-1">
-                        <!-- City -->
-                        <div class="col-md-6 mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" id="city" name="city" class="form-control" placeholder="city..."
-                                required>
+                            <!-- Province -->
+                            <div class="col-md-6 mb-3">
+                                <label for="province" class="form-label">Province</label>
+                                <input type="text" id="province" name="province" class="form-control"
+                                    placeholder="province..." required>
+                            </div>
                         </div>
 
-                        <!-- Province -->
-                        <div class="col-md-6 mb-3">
-                            <label for="province" class="form-label">Province</label>
-                            <input type="text" id="province" name="province" class="form-control"
-                                placeholder="province..." required>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <!-- Address -->
+                                <label for="address" class="form-label">Address</label>
+                                <textarea id="address" name="address" class="form-control" rows="2"
+                                    placeholder="your dilevery address..." required></textarea>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <!-- Address -->
-                            <label for="address" class="form-label">Address</label>
-                            <textarea id="address" name="address" class="form-control" rows="2"
-                                placeholder="your dilevery address..." required></textarea>
+                        <div class="row">
+                            <!-- Payment Method -->
+                            <div class="col-md-12 mb-3">
+                                <label for="payment_method" class="form-label">Payment Method</label>
+                                <select id="payment_method" name="payment_method" class="form-select" required>
+                                    <option value="">-- Select Payment Method --</option>
+                                    <option value="cash_on_delivery">Cash on Delivery</option>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="paypal">PayPal</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <!-- Payment Method -->
-                        <div class="col-md-12 mb-3">
-                            <label for="payment_method" class="form-label">Payment Method</label>
-                            <select id="payment_method" name="payment_method" class="form-select" required>
-                                <option value="">-- Select Payment Method --</option>
-                                <option value="cash_on_delivery">Cash on Delivery</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="paypal">PayPal</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Place Order Button -->
-                    <button type="submit" class="btn btn-sm place-order-btn">Place Order</button>
+                        <!-- Place Order Button -->
+                        <button type="submit" class="btn btn-sm place-order-btn">Place Order</button>
 
                 </form>
             </div>

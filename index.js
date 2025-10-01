@@ -25,9 +25,9 @@ const pool = mysql.createPool({
 // optional: quick test
 pool.getConnection((err, connection) => {
     if (err) {
-        console.error('❌ MySQL connection error:', err);
+        console.error('MySQL connection error:', err);
     } else {
-        console.log('✅ Connected to MySQL (pool)');
+        console.log('Connected to MySQL (pool)');
         connection.release();
     }
 });
@@ -121,7 +121,6 @@ app.get('/', (req, res) => {
         });
     }
 });
-
 
 // login/signup/forgot
 app.get('/login', (req, res) => res.render("login.ejs"));
@@ -269,7 +268,7 @@ app.get('/checkout', verifyToken, (req, res) => {
         const user = result[0];
 
         const cartQuery = `
-            SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+            SELECT c.cart_id, p.product_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
             FROM cart c
             JOIN products p ON c.product_id = p.product_id
             WHERE c.user_id = ?
@@ -283,35 +282,57 @@ app.get('/checkout', verifyToken, (req, res) => {
     });
 });
 
-// place order
+// place order POST request
 app.post('/place-order', verifyToken, (req, res) => {
     const userID = req.user.id;
     const { full_name, phone_number, address, city, province, payment_method } = req.body;
 
+    // fetch cart items for this user
     const cartQuery = `
-        SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+        SELECT c.cart_id, c.product_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
         FROM cart c
         JOIN products p ON c.product_id = p.product_id
         WHERE c.user_id = ?
     `;
-    pool.query(cartQuery, [userID], (err, result) => {
+
+    pool.query(cartQuery, [userID], (err, cartItems) => {
         if (err) return res.send("Error while fetching cart items");
-        if (result.length === 0) return res.send("Your cart is empty");
+        if (cartItems.length === 0) return res.send("Your cart is empty");
 
+        // calculate total amount
         let total = 0;
-        result.forEach(item => total += parseFloat(item.total));
+        cartItems.forEach(item => total += parseFloat(item.total));
 
-        pool.query(
-            'INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [userID, full_name, phone_number, address, city, province, total, payment_method],
-            (err) => {
-                if (err) return res.send("Error while placing the order");
+        // insert into orders table
+        const orderQuery = `
+            INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        pool.query(orderQuery, [userID, full_name, phone_number, address, city, province, total, payment_method], (err, orderResult) => {
+            if (err) return res.send("Error while placing the order");
+
+            const orderId = orderResult.insertId; // last inserted order id
+
+            // insert multiple products into order_items
+            const values = cartItems.map(item => [orderId, item.product_id, item.quantity, item.price]);
+            const placeholders = values.map(() => '(?, ?, ?, ?)').join(', ');
+            const flatValues = values.flat();
+
+            const orderItemsQuery = `INSERT INTO order_items_details(order_id, product_id, quantity, price) VALUES ${placeholders}`;
+
+            pool.query(orderItemsQuery, flatValues, (err) => {
+                if (err) {
+                    console.error("Order Items Insert Error:", err);
+                    return res.send("Error while saving order items");
+                }
+
+                // clear user's cart
                 pool.query('DELETE FROM cart WHERE user_id = ?', [userID], (err) => {
                     if (err) return res.send("Error while clearing the cart");
-                    return res.send("Your order has been placed successfully!");
+                    res.redirect('/');
                 });
-            }
-        );
+            });
+        });
     });
 });
 
