@@ -4,33 +4,32 @@ dotenv.config();
 
 import express from 'express';
 import bodyParser from "body-parser";
-import mysql from 'mysql2';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import pkg from 'pg';
+
+const { Pool } = pkg;
 
 const app = express();
 const port = process.env.PORT || 10000;
 
-// MySQL pool setup
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+// PostgreSQL pool setup
+const pool = new Pool({
+    host: process.env.PGHOST,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    database: process.env.PGDATABASE,
+    port: process.env.PGPORT,
+    ssl: { rejectUnauthorized: false }
 });
 
 // optional: quick test
-pool.getConnection((err, connection) => {
-    if (err) {
-        console.error('MySQL connection error:', err);
-    } else {
-        console.log('Connected to MySQL (pool)');
-        connection.release();
-    }
-});
+pool.connect()
+    .then(() => console.log('✅ Connected to PostgreSQL'))
+    .catch(err => console.error('❌ PostgreSQL connection error:', err));
 
 // middlewares
 app.set('view engine', 'ejs');
@@ -57,25 +56,24 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
-}, (accessToken, refreshToken, profile, done) => {
-    const email = profile.emails?.[0]?.value;
-    const name = profile.displayName || profile.name?.givenName || '';
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        const email = profile.emails?.[0]?.value;
+        const name = profile.displayName || profile.name?.givenName || '';
 
-    if (!email) return done(new Error("No email returned from Google"));
+        if (!email) return done(new Error("No email returned from Google"));
 
-    pool.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-        if (err) return done(err);
-        if (result.length > 0) return done(null, result[0]);
+        const existing = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (existing.rows.length > 0) return done(null, existing.rows[0]);
 
-        pool.query(
-            'INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)',
-            [name, '', email, ''],
-            (err, insertRes) => {
-                if (err) return done(err);
-                return done(null, { id: insertRes.insertId, first_name: name, email });
-            }
+        const insertRes = await pool.query(
+            'INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, '', email, '']
         );
-    });
+        return done(null, insertRes.rows[0]);
+    } catch (err) {
+        return done(err);
+    }
 }));
 
 // Google Auth
@@ -97,28 +95,25 @@ app.get('/auth/google/callback',
 
 /* ---------------- ROUTES ---------------- */
 // Home
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     const token = req.cookies?.token;
 
+    const fetchProducts = async (isLoggedIn) => {
+        try {
+            const result = await pool.query('SELECT * FROM products');
+            return res.render('index', { products: result.rows, isLoggedIn });
+        } catch {
+            return res.status(500).send("Server error");
+        }
+    };
+
     if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, (err) => {
-            if (!err) {
-                // agar token valid hai to dashboard bhej do aur neeche ka code na chale
-                return res.redirect('/dashboard');
-            } else {
-                // agar token invalid hai to products render karo
-                pool.query('SELECT * FROM products', (err, result) => {
-                    if (err) return res.status(500).send("Server error");
-                    return res.render('index', { products: result, isLoggedIn: false });
-                });
-            }
+        jwt.verify(token, process.env.JWT_SECRET, async (err) => {
+            if (!err) return res.redirect('/dashboard');
+            return fetchProducts(false);
         });
     } else {
-        // agar token hi nahi hai
-        pool.query('SELECT * FROM products', (err, result) => {
-            if (err) return res.status(500).send("Server error");
-            return res.render('index', { products: result, isLoggedIn: false });
-        });
+        return fetchProducts(false);
     }
 });
 
@@ -128,60 +123,57 @@ app.get('/signup', (req, res) => res.render("signup.ejs"));
 app.get('/forgotPassword', (req, res) => res.render("forgot-password.ejs"));
 
 // dashboard
-app.get('/dashboard', verifyToken, (req, res) => {
-    const userId = req.user.id;
-    pool.query('SELECT * FROM users WHERE id = ?', [userId], (err, userRes) => {
-        if (err || userRes.length === 0) return res.send("no user found");
-        const user = userRes[0];
-        pool.query('SELECT * FROM products', (err, productsRes) => {
-            if (err) return res.send("No Products");
-            return res.render("dashboard.ejs", { user, products: productsRes });
-        });
-    });
+app.get('/dashboard', verifyToken, async (req, res) => {
+    try {
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+        if (userRes.rows.length === 0) return res.send("no user found");
+
+        const productsRes = await pool.query('SELECT * FROM products');
+        return res.render("dashboard.ejs", { user: userRes.rows[0], products: productsRes.rows });
+    } catch {
+        return res.send("Error fetching data");
+    }
 });
 
 // signup POST
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
     const { first_name, last_name, email, password } = req.body;
-    pool.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-        if (err) return res.send("Error while fetching user!");
-        if (result.length > 0) return res.status(400).send('User already exists');
+    try {
+        const checkUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (checkUser.rows.length > 0) return res.status(400).send('User already exists');
 
-        bcrypt.hash(password, 10, (err, hashedPassword) => {
-            if (err) return res.send("Error while hashing password!");
-            pool.query(
-                'INSERT INTO users(first_name, last_name, email, password) VALUES (?, ?, ?, ?)',
-                [first_name, last_name, email, hashedPassword],
-                (err) => {
-                    if (err) return res.send("Error while registering the user!");
-                    return res.redirect('/login');
-                }
-            );
-        });
-    });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await pool.query(
+            'INSERT INTO users(first_name, last_name, email, password) VALUES ($1, $2, $3, $4)',
+            [first_name, last_name, email, hashedPassword]
+        );
+        return res.redirect('/login');
+    } catch {
+        return res.send("Error while registering the user!");
+    }
 });
 
 // login POST
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
     const { email, password } = req.body;
-    pool.query('SELECT * FROM users WHERE email = ?', [email], (err, result) => {
-        if (err) return res.send("Error while fetching the user!");
-        if (result.length === 0) return res.send("No user found with this email!");
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (result.rows.length === 0) return res.send("No user found with this email!");
 
-        const user = result[0];
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) return res.send("Error while checking password!");
-            if (!isMatch) return res.send("Invalid credentials");
+        const user = result.rows[0];
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.send("Invalid credentials");
 
-            const token = jwt.sign(
-                { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email, role: user.role },
-                process.env.JWT_SECRET,
-                { expiresIn: "1h" }
-            );
-            res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-            return res.redirect("/dashboard");
-        });
-    });
+        const token = jwt.sign(
+            { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+        res.cookie("token", token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+        return res.redirect("/dashboard");
+    } catch {
+        return res.send("Login error");
+    }
 });
 
 // logout
@@ -191,161 +183,153 @@ app.get('/logout', (req, res) => {
 });
 
 // view product
-app.get('/view-product/:id', verifyToken, (req, res) => {
-    const productID = req.params.id;
-    const userId = req.user.id;
+app.get('/view-product/:id', verifyToken, async (req, res) => {
+    try {
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+        if (userRes.rows.length === 0) return res.send("database error");
+        const user = userRes.rows[0];
 
-    pool.query('SELECT * FROM users WHERE id = ?', [userId], (err, userRes) => {
-        if (err || userRes.length === 0) return res.send("database error");
-        const user = userRes[0];
-        pool.query('SELECT * FROM products WHERE product_id = ?', [productID], (err, productRes) => {
-            if (err || productRes.length === 0) return res.send("No such product in the database");
-            return res.render('view-product.ejs', { user, product: productRes[0] });
-        });
-    });
+        const productRes = await pool.query('SELECT * FROM products WHERE product_id = $1', [req.params.id]);
+        if (productRes.rows.length === 0) return res.send("No such product in the database");
+
+        return res.render('view-product.ejs', { user, product: productRes.rows[0] });
+    } catch {
+        return res.send("Error fetching product");
+    }
 });
 
 // add to cart
-app.post('/add-to-cart/:id', verifyToken, (req, res) => {
+app.post('/add-to-cart/:id', verifyToken, async (req, res) => {
     const userId = req.user.id;
     const productId = req.params.id;
     const productQuantity = parseInt(req.body.quantity) || 1;
 
-    pool.query('SELECT * FROM cart WHERE user_id = ? AND product_id = ?', [userId, productId], (err, selectRes) => {
-        if (err) return res.send("Database Error");
+    try {
+        const selectRes = await pool.query('SELECT * FROM cart WHERE user_id = $1 AND product_id = $2', [userId, productId]);
 
-        if (selectRes.length > 0) {
-            pool.query(
-                'UPDATE cart SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?',
-                [productQuantity, userId, productId],
-                () => { return res.redirect('/cart'); }
+        if (selectRes.rows.length > 0) {
+            await pool.query(
+                'UPDATE cart SET quantity = quantity + $1 WHERE user_id = $2 AND product_id = $3',
+                [productQuantity, userId, productId]
             );
         } else {
-            pool.query(
-                'INSERT INTO cart(user_id, product_id, quantity) VALUES (?, ?, ?)',
-                [userId, productId, productQuantity],
-                () => { return res.redirect('/cart'); }
+            await pool.query(
+                'INSERT INTO cart(user_id, product_id, quantity) VALUES ($1, $2, $3)',
+                [userId, productId, productQuantity]
             );
         }
-    });
+        return res.redirect('/cart');
+    } catch {
+        return res.send("Database Error");
+    }
 });
 
 // cart
-app.get('/cart', verifyToken, (req, res) => {
-    const userId = req.user.id;
-    pool.query('SELECT * FROM users WHERE id = ?', [userId], (err, userRes) => {
-        if (err || userRes.length === 0) return res.send("No such user in the database");
-        const user = userRes[0];
+app.get('/cart', verifyToken, async (req, res) => {
+    try {
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+        if (userRes.rows.length === 0) return res.send("No such user in the database");
+        const user = userRes.rows[0];
 
         const cartQuery = `
             SELECT c.cart_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
             FROM cart c
             JOIN products p ON c.product_id = p.product_id
-            WHERE c.user_id = ?
+            WHERE c.user_id = $1
         `;
-        pool.query(cartQuery, [userId], (err, cartRes) => {
-            if (err) return res.send("Error while fetching the cart items");
-            return res.render('cart.ejs', { user, cartItems: cartRes });
-        });
-    });
+        const cartRes = await pool.query(cartQuery, [req.user.id]);
+        return res.render('cart.ejs', { user, cartItems: cartRes.rows });
+    } catch {
+        return res.send("Error while fetching the cart items");
+    }
 });
 
 // remove item
-app.get('/removeItem/:id', verifyToken, (req, res) => {
-    const userID = req.user.id;
-    const cartID = req.params.id;
-    pool.query('DELETE FROM cart WHERE user_id = ? AND cart_id = ?', [userID, cartID], (err) => {
-        if (err) return res.status(500).send("Error while deleting the product.");
+app.get('/removeItem/:id', verifyToken, async (req, res) => {
+    try {
+        await pool.query('DELETE FROM cart WHERE user_id = $1 AND cart_id = $2', [req.user.id, req.params.id]);
         return res.redirect("/cart");
-    });
+    } catch {
+        return res.status(500).send("Error while deleting the product.");
+    }
 });
 
 // checkout
-app.get('/checkout', verifyToken, (req, res) => {
-    const userID = req.user.id;
-    pool.query('SELECT * FROM users WHERE id = ?', [userID], (err, result) => {
-        if (err || result.length === 0) return res.send("Error while fetching user");
-        const user = result[0];
+app.get('/checkout', verifyToken, async (req, res) => {
+    try {
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+        if (userRes.rows.length === 0) return res.send("Error while fetching user");
+        const user = userRes.rows[0];
 
         const cartQuery = `
             SELECT c.cart_id, p.product_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
             FROM cart c
             JOIN products p ON c.product_id = p.product_id
-            WHERE c.user_id = ?
+            WHERE c.user_id = $1
         `;
-        pool.query(cartQuery, [userID], (err, result) => {
-            if (err) return res.send("Error while fetching the cart items");
-            let total = 0;
-            result.forEach(item => total += parseFloat(item.total));
-            return res.render('checkout.ejs', { user, cartItems: result, total });
-        });
-    });
+        const cartRes = await pool.query(cartQuery, [req.user.id]);
+
+        let total = 0;
+        cartRes.rows.forEach(item => total += parseFloat(item.total));
+
+        return res.render('checkout.ejs', { user, cartItems: cartRes.rows, total });
+    } catch {
+        return res.send("Error while fetching the cart items");
+    }
 });
 
 // place order POST request
-app.post('/place-order', verifyToken, (req, res) => {
+app.post('/place-order', verifyToken, async (req, res) => {
     const userID = req.user.id;
     const { full_name, phone_number, address, city, province, payment_method } = req.body;
 
-    // fetch cart items for this user
-    const cartQuery = `
-        SELECT c.cart_id, c.product_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
-        FROM cart c
-        JOIN products p ON c.product_id = p.product_id
-        WHERE c.user_id = ?
-    `;
-
-    pool.query(cartQuery, [userID], (err, cartItems) => {
-        if (err) return res.send("Error while fetching cart items");
+    try {
+        const cartQuery = `
+            SELECT c.cart_id, c.product_id, p.name, p.price, c.quantity, (p.price * c.quantity) AS total
+            FROM cart c
+            JOIN products p ON c.product_id = p.product_id
+            WHERE c.user_id = $1
+        `;
+        const cartItems = (await pool.query(cartQuery, [userID])).rows;
         if (cartItems.length === 0) return res.send("Your cart is empty");
-
-        // calculate total amount
+        
         let total = 0;
         cartItems.forEach(item => total += parseFloat(item.total));
 
-        // insert into orders table
-        const orderQuery = `
-            INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        pool.query(orderQuery, [userID, full_name, phone_number, address, city, province, total, payment_method], (err, orderResult) => {
-            if (err) return res.send("Error while placing the order");
+        const orderQuery = `INSERT INTO orders(user_id, full_name, phone_number, address, city, province, total_amount, payment_method)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING order_id`;
+        const orderResult = await pool.query(orderQuery, [
+            userID, full_name, phone_number, address, city, province, total, payment_method
+        ]);
+        const orderId = orderResult.rows[0].order_id;
 
-            const orderId = orderResult.insertId; // last inserted order id
+        for (const item of cartItems) {
+            await pool.query(
+                'INSERT INTO order_items_details(order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)',
+                [orderId, item.product_id, item.quantity, item.price]
+            );
+        }
 
-            // insert multiple products into order_items
-            const values = cartItems.map(item => [orderId, item.product_id, item.quantity, item.price]);
-            const placeholders = values.map(() => '(?, ?, ?, ?)').join(', ');
-            const flatValues = values.flat();
-
-            const orderItemsQuery = `INSERT INTO order_items_details(order_id, product_id, quantity, price) VALUES ${placeholders}`;
-
-            pool.query(orderItemsQuery, flatValues, (err) => {
-                if (err) {
-                    console.error("Order Items Insert Error:", err);
-                    return res.send("Error while saving order items");
-                }
-
-                // clear user's cart
-                pool.query('DELETE FROM cart WHERE user_id = ?', [userID], (err) => {
-                    if (err) return res.send("Error while clearing the cart");
-                    res.redirect('/');
-                });
-            });
-        });
-    });
+        await pool.query('DELETE FROM cart WHERE user_id = $1', [userID]);
+        return res.redirect('/');
+    } catch (err) {
+        console.error("Order Error:", err);
+        return res.send("Error while placing the order");
+    }
 });
 
 // orders
-app.get('/orders', verifyToken, (req, res) => {
-    const user_id = req.user.id;
-    pool.query('SELECT * FROM users WHERE id = ?', [user_id], (err, result) => {
-        if (err || result.length === 0) return res.send("Error while fetching user");
-        const user = result[0];
+app.get('/orders', verifyToken, async (req, res) => {
+    try {
+        const userRes = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+        if (userRes.rows.length === 0) return res.send("Error while fetching user");
+        const user = userRes.rows[0];
         return res.render('orders.ejs', { user });
-    });
+    } catch {
+        return res.send("Error while fetching user orders");
+    }
 });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`🚀 Server is running on http://localhost:${port}`);
 });
