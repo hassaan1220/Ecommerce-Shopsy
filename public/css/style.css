@@ -151,7 +151,7 @@ body {
     width: 100%;
     max-width: 400px;
     height: 100vh;
-    background-color: var(--menu-bg);
+    background-color: white;
     z-index: 1000;
     transition: var(--transition);
     overflow-y: auto;
