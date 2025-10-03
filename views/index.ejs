@@ -143,17 +143,28 @@
         <div class="slides-container">
             <!-- Slide 1 -->
             <div class="slide active">
-                <img src="/uploads/1.png" alt="Banner 1" class="slide-img img-fluid">
+                <picture>
+                    <!-- Mobile image -->
+                    <source media="(max-width: 768px)" srcset="/uploads/mobile-1.png">
+                    <!-- Default (desktop) image -->
+                    <img src="/uploads/1.png" alt="Banner 1" class="slide-img img-fluid">
+                </picture>
             </div>
 
             <!-- Slide 2 -->
             <div class="slide">
-                <img src="/uploads/2.png" alt="Banner 2" class="slide-img img-fluid">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="/uploads/mobile-2.png">
+                    <img src="/uploads/2.png" alt="Banner 2" class="slide-img img-fluid">
+                </picture>
             </div>
 
             <!-- Slide 3 -->
             <div class="slide">
-                <img src="/uploads/3.png" alt="Banner 3" class="slide-img img-fluid">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="/uploads/mobile-3.png">
+                    <img src="/uploads/3.png" alt="Banner 3" class="slide-img img-fluid">
+                </picture>
             </div>
         </div>
 
@@ -177,15 +188,12 @@
         </div>
     </div>
 
+
     <!-- Products cards -->
     <div class="container products-cards-main-cntr">
         <div class="row">
-            <div class="products-heading-cntr col-md-6 text-left">
+            <div class="products-heading-cntr col-xs-12 col-sm-12 col-md-12 p-2 text-center">
                 <h3>FEATURED PRODUCTS</h3>
-            </div>
-            <div class="products-heading-cntr col-md-6"
-                style="display: flex; justify-content: flex-end; align-items: center;">
-                <p><a href="">View All Products →</a></p>
             </div>
         </div>
         <div class="row g-1">
@@ -219,6 +227,11 @@
                     </div>
                 </div>
                 <% }); %>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 p-3 text-center">
+                <p><a class="products-page-heading" href="/products-page">View All Products →</a></p>
+            </div>
         </div>
     </div>
 
@@ -357,7 +370,7 @@
     <!-- Owl Carousel Section -->
     <div class="container owl-carousel-main-cntr">
         <div class="row">
-            <div class="owl-carousel-main-cntr-heading text-left">
+            <div class="owl-carousel-main-cntr-heading text-center">
                 <h3>OUR LATEST STYLES</h3>
             </div>
         </div>
@@ -369,7 +382,6 @@
                     <img src="/uploads/dresses.jpg" alt="Dresses">
                     <div class="card-content">
                         <h4>Dresses</h4>
-                        <p>Discover chic and elegant dresses for every occasion.</p>
                         <a href="#" class="btn-shop">Shop Now →</a>
                     </div>
                 </div>
@@ -381,7 +393,6 @@
                     <img src="/uploads/tops.JPG" alt="Tops">
                     <div class="card-content">
                         <h4>Tops</h4>
-                        <p>Trendy tops that elevate your casual and formal looks.</p>
                         <a href="#" class="btn-shop">Shop Now →</a>
                     </div>
                 </div>
@@ -393,7 +404,6 @@
                     <img src="/uploads/outwears.png" alt="Outerwear">
                     <div class="card-content">
                         <h4>Outerwears</h4>
-                        <p>Stay warm & stylish with our jackets and coats.</p>
                         <a href="#" class="btn-shop">Shop Now →</a>
                     </div>
                 </div>
@@ -405,7 +415,6 @@
                     <img src="/uploads/jeans.jpg" alt="Jeans">
                     <div class="card-content">
                         <h4>Jeans</h4>
-                        <p>Perfect fit jeans that combine comfort with fashion.</p>
                         <a href="#" class="btn-shop">Shop Now →</a>
                     </div>
                 </div>
@@ -417,7 +426,6 @@
                     <img src="/uploads/shoes.jpg" alt="Jeans">
                     <div class="card-content">
                         <h4>Footwears</h4>
-                        <p>Classic footwears that combine comfort with fashion.</p>
                         <a href="#" class="btn-shop">Shop Now →</a>
                     </div>
                 </div>
@@ -426,13 +434,13 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer mt-5 bg-body-tertiary">
+    <footer class="footer mt-5 p-3 bg-body-tertiary">
         <div class="container">
             <div class="row">
                 <!-- About Section -->
                 <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 p-3">
                     <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
-                    <p class="text-muted">Your one-stop shop for all your needs. We provide the best quality products at
+                    <p class="text-muted">Your one stop shop for all your needs. We provide the best quality products at
                         affordable prices.</p>
                 </div>
 

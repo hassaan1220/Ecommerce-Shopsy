@@ -14,7 +14,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 
 const app = express();
-const port = process.env.PORT || 10000;
+const port = process.env.PORT;
 
 // PostgreSQL pool setup
 const pool = new Pool({
@@ -292,7 +292,7 @@ app.post('/place-order', verifyToken, async (req, res) => {
         `;
         const cartItems = (await pool.query(cartQuery, [userID])).rows;
         if (cartItems.length === 0) return res.send("Your cart is empty");
-        
+
         let total = 0;
         cartItems.forEach(item => total += parseFloat(item.total));
 
