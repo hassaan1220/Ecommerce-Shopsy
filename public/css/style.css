@@ -450,7 +450,6 @@ body {
     width: 100%;
     height: 500px;
     overflow: hidden;
-    background: #000;
 }
 
 /* Slides container */
@@ -758,7 +757,7 @@ body {
     border-radius: 8px;
     background-size: cover;
     background-position: center;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("../uploads/limited-collection-banner.png");
+    background-image: url("../uploads/limited-collection-banner.png");
 }
 
 @media (max-width: 768px) {

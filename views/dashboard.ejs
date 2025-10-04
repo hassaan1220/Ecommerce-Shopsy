@@ -25,7 +25,6 @@
 </head>
 
 <body>
-
     <header class="header">
         <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
         <button class="hamburger" aria-label="Menu" aria-expanded="false">
@@ -39,12 +38,14 @@
 
     <nav class="nav">
         <div class="nav-content">
+            <div class="logo"><a href="/"><img src="/uploads/logo.png"></a></div>
+
             <!-- Close Button -->
             <button class="close-btn" aria-label="Close Menu">
                 <i class="fas fa-times"></i>
             </button>
 
-            <ul class="nav-list">
+            <ul class="nav-list mt-3">
                 <li class="nav-item" style="--delay: 0.1s">
                     <a href="#" class="nav-link">
                         <span class="link-text">Home</span>
@@ -183,17 +184,28 @@
         <div class="slides-container">
             <!-- Slide 1 -->
             <div class="slide active">
-                <img src="/uploads/1.png" alt="Banner 1" class="slide-img img-fluid">
+                <picture>
+                    <!-- Mobile image -->
+                    <source media="(max-width: 768px)" srcset="/uploads/slider-1.png">
+                    <!-- Default (desktop) image -->
+                    <img src="/uploads/1.png" alt="Banner 1" class="slide-img img-fluid">
+                </picture>
             </div>
 
             <!-- Slide 2 -->
             <div class="slide">
-                <img src="/uploads/2.png" alt="Banner 2" class="slide-img img-fluid">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="/uploads/slider-2.png">
+                    <img src="/uploads/2.png" alt="Banner 2" class="slide-img img-fluid">
+                </picture>
             </div>
 
             <!-- Slide 3 -->
             <div class="slide">
-                <img src="/uploads/3.png" alt="Banner 3" class="slide-img img-fluid">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="/uploads/slider-3.png">
+                    <img src="/uploads/3.png" alt="Banner 3" class="slide-img img-fluid">
+                </picture>
             </div>
         </div>
 
@@ -220,12 +232,8 @@
     <!-- Products cards -->
     <div class="container products-cards-main-cntr">
         <div class="row">
-            <div class="products-heading-cntr col-md-6 text-left">
+            <div class="products-heading-cntr col-xs-12 col-sm-12 col-md-12 p-2 text-center">
                 <h3>FEATURED PRODUCTS</h3>
-            </div>
-            <div class="products-heading-cntr col-md-6"
-                style="display: flex; justify-content: flex-end; align-items: center;">
-                <p><a href="">View All Products →</a></p>
             </div>
         </div>
         <div class="row g-1">
@@ -259,6 +267,11 @@
                     </div>
                 </div>
                 <% }); %>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 p-3 text-center">
+                <p><a class="products-page-heading" href="/products-page">View All Products →</a></p>
+            </div>
         </div>
     </div>
 
@@ -301,7 +314,9 @@
 
     <!-- limited collection container -->
     <div class="container limited-collection-main-cntr">
-        <div class="container-fluid limited-collection-banner"></div>
+        <div class="row">
+            <div class="container-fluid col-sm-12 col-xs-12 col-md-12 col-lg-12 limited-collection-banner"></div>
+        </div>
     </div>
 
     <!-- Showcase tab view Section -->
@@ -309,10 +324,10 @@
         <!-- Tabs -->
         <div class="showcase-tabs">
             <div class="row">
-                <div class="col-md-6 showcase-tab-view-heading-cntr">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 showcase-tab-view-heading-cntr">
                     <h3>BEST SELLING PRODUCTS</h3>
                 </div>
-                <div class="col-md-6 gap-1" style="text-align: right;">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 showcase-tab-view-btn-cntr gap-1">
                     <div class="showcase-tab btn btn-sm active" data-tab="all">All</div>
                     <div class="showcase-tab btn btn-sm" data-tab="sale">Sale</div>
                     <div class="showcase-tab btn btn-sm" data-tab="bestseller">Bestseller</div>
