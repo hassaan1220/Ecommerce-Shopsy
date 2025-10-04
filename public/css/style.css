@@ -761,6 +761,16 @@ body {
     background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url("../uploads/limited-collection-banner.png");
 }
 
+@media (max-width: 768px) {
+    .limited-collection-banner {
+        height: 500px;
+        border-radius: 8px;
+        background-size: cover;
+        background-position: center;
+        background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url("../uploads/mobilebanner.png");
+    }
+}
+
 /*************** limited collecton css ended  *******************/
 
 /*************** products show case tab view started  *******************/
@@ -777,6 +787,10 @@ body {
     color: #ff9800;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
+}
+
+.showcase-tab-view-btn-cntr {
+    text-align: right;
 }
 
 .showcase-tab {
@@ -825,6 +839,16 @@ body {
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     margin: 0;
+}
+
+@media (max-width: 768px) {
+    .showcase-tab-view-heading-cntr {
+        text-align: center;
+    }
+
+    .showcase-tab-view-btn-cntr {
+        text-align: center;
+    }
 }
 
 /*************** products show case tab view ended  *******************/
