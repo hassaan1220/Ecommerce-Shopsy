@@ -1024,6 +1024,21 @@ body {
     color: #ff9800;
 }
 
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .footer-logo-heading-cntr {
+        text-align: center;
+    }
+    .footer-quicklinks-cntr {
+        text-align: center;
+    }
+    .footer-social-icons-cntr {
+        text-align: center;
+    }
+    .footer-social-icons-cntr .icons {
+        justify-content: center;
+    }
+}
 /*************** footer css ended  *******************/
 
 /*************** login container (login page) css start  *******************/
